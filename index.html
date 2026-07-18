@@ -44,6 +44,22 @@
   .small { font-size: 13px; opacity: 0.8; }
   details { margin-top: 12px; font-size: 14px; }
   kbd { border: 1px solid #0007; padding: 0 4px; border-radius: 4px; }
+  .path-card { margin-top: 12px; }
+  .path-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .path-list { list-style: none; margin: 12px 0 0; padding: 0; }
+  .path-list li {
+    position: relative; padding: 10px 0 10px 22px;
+    border-left: 2px solid #000; margin-left: 6px;
+  }
+  .path-list li:last-child { border-left-color: transparent; }
+  .path-list li::before {
+    content: ""; position: absolute; left: -6px; top: 14px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #fff; border: 2px solid #000;
+  }
+  .path-list li.death::before { background: #000; }
+  .path-age { font-weight: 700; font-size: 12px; letter-spacing: 0.02em; }
+  .path-text { font-size: 14px; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -70,6 +86,12 @@
         so they appear more often. Within each country, your household class influences life expectancy and common causes of death.
       </div>
     </div>
+  </div>
+
+  <div class="card path-card" id="pathCard" hidden>
+    <div class="path-title">Most probable life path</div>
+    <div class="small" id="pathIntro"></div>
+    <ul class="path-list" id="pathList"></ul>
   </div>
 
   <details>
@@ -217,7 +239,15 @@ function pickClass(income) {
 
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 
-function sampleAge(income, econClass) {
+function sampleAge(income, econClass, cause) {
+  // Birth / early-childhood causes should land on early ages.
+  if (cause.includes("birth") || cause.includes("early childhood")) {
+    return Math.random() < 0.55 ? 0 : clamp(Math.round(Math.random() * 4), 1, 4);
+  }
+  if (cause.includes("malnutrition")) {
+    return clamp(Math.round(1 + Math.random() * 12), 1, 14);
+  }
+
   const base = LIFE_EXPECTANCY[income];
   const shift = {
     "underclass": -18, "lower working class": -12, "working class": -8,
@@ -241,6 +271,188 @@ function pickCause(income, econClass) {
 }
 
 function pct(n, d) { return ((n / d) * 100).toFixed(2); }
+
+/* ---------------------------
+   Most probable life path
+   Stages are the modal (most likely) outcomes for income × class.
+   The path stops at the rolled age of death.
+--------------------------- */
+const CLASS_RANK = {
+  "underclass": 0, "lower working class": 1, "working class": 2,
+  "lower middle class": 3, "middle class": 4, "upper middle class": 5, "upper class": 6
+};
+
+function lifePathStages(country, income, econClass) {
+  const rank = CLASS_RANK[econClass];
+  const poor = rank <= 1;
+  const modest = rank <= 3;
+  const affluent = rank >= 5;
+
+  const childhood = {
+    low: poor
+      ? "Scarce food, limited clean water, and little routine medical care."
+      : "Crowded household; basic needs met with frequent interruptions from illness or work.",
+    "lower-middle": poor
+      ? "Basic shelter and food, but school and clinics compete with household costs."
+      : "Urban or peri-urban childhood with patchy public services and family support.",
+    "upper-middle": modest
+      ? "Public schooling and vaccinations; parents stretch income to keep you enrolled."
+      : "Stable housing, regular meals, and access to local clinics and schools.",
+    high: modest
+      ? "Public services cover the essentials; parents work long hours to stay afloat."
+      : "Secure housing, preventive care, and an expectation that childhood is for school.",
+  }[income];
+
+  const school = {
+    low: poor
+      ? "Leave school early — or never enroll — to help with farm, household, or informal work."
+      : "A few years of primary school before work and distance cut studies short.",
+    "lower-middle": poor
+      ? "Primary school if nearby; secondary school is uncommon."
+      : "Finish lower secondary; higher education is rare without scholarships or migration.",
+    "upper-middle": modest
+      ? "Complete secondary school; vocational training or short college is the usual ceiling."
+      : "Secondary school plus college or technical training as the default path.",
+    high: modest
+      ? "Finish secondary school; further study depends on grades, loans, and family help."
+      : affluent
+        ? "Selective schools and university are the expected route."
+        : "Secondary school and a college or apprenticeship track are typical.",
+  }[income];
+
+  const work = {
+    low: poor
+      ? "Informal labor, subsistence farming, or unpaid household work with irregular cash income."
+      : "Low-wage informal or agricultural work; formal jobs are scarce.",
+    "lower-middle": poor
+      ? "Day labor, small trade, or factory/service work with little security."
+      : "Wage work in services, manufacturing, or small business; savings stay thin.",
+    "upper-middle": modest
+      ? "Stable blue- or pink-collar work, or a small family enterprise."
+      : "Skilled employment or a professional track with steadier earnings.",
+    high: modest
+      ? "Service, trade, or administrative work; housing and healthcare dominate the budget."
+      : affluent
+        ? "Professional, managerial, or capital-linked work with high security."
+        : "Steady skilled or professional work in a formal labor market.",
+  }[income];
+
+  const family = {
+    low: "Partner and children arrive early; extended kin share childcare and risk.",
+    "lower-middle": modest
+      ? "Marriage and children in the late teens or early twenties; family buffers shocks."
+      : "Family formation in the twenties; one or two earners support dependents.",
+    "upper-middle": "Partnership and children often wait until work is steadier; smaller households are common.",
+    high: affluent
+      ? "Later partnership, fewer children, and paid childcare or schooling support."
+      : "Partnership and children usually after education or a foothold in work.",
+  }[income];
+
+  const living = {
+    low: poor
+      ? "Rural or dense informal housing; electricity, sanitation, and transport are unreliable."
+      : "Modest dwelling with shared amenities and frequent infrastructure gaps.",
+    "lower-middle": "Dense urban or town housing; public transit and informal markets shape daily life.",
+    "upper-middle": modest
+      ? "Apartment or small house in a growing city; appliances and debt are both common."
+      : "Comfortable urban or suburban housing with reliable utilities.",
+    high: affluent
+      ? "High-amenity neighborhood; private transport and specialist care are normal."
+      : "Adequate housing with reliable utilities; location trades cost against opportunity.",
+  }[income];
+
+  return [
+    { age: 0,  label: "Birth",      text: `Born in ${country.name} into a ${econClass} household (${income} income band).` },
+    { age: 5,  label: "Early years", text: childhood },
+    { age: 12, label: "Schooling",   text: school },
+    { age: 20, label: "Work",        text: work },
+    { age: 30, label: "Family",      text: family },
+    { age: 45, label: "Midlife",     text: living },
+  ];
+}
+
+function deathStage(age, cause) {
+  if (age <= 0) {
+    return {
+      age: 0,
+      label: "Death",
+      text: `Died at birth — ${cause}.`,
+      death: true,
+    };
+  }
+  if (age < 1) {
+    return {
+      age,
+      label: "Death",
+      text: `Died in infancy at under 1 year from ${cause}.`,
+      death: true,
+    };
+  }
+  if (age < 5) {
+    return {
+      age,
+      label: "Death",
+      text: `Died in early childhood at ${age} from ${cause}.`,
+      death: true,
+    };
+  }
+  return {
+    age,
+    label: "Death",
+    text: `Died at ${age} from ${cause}.`,
+    death: true,
+  };
+}
+
+function buildLifePath(country, income, econClass, age, cause) {
+  const stages = lifePathStages(country, income, econClass);
+  // Keep milestones that typically occur before death; always keep birth.
+  const lived = stages.filter((s, i) => i === 0 || s.age < age);
+  const death = deathStage(age, cause);
+
+  const article = /^[aeiou]/i.test(econClass) ? "an" : "a";
+  let intro;
+  if (age <= 0) {
+    intro = "This roll ended at birth. There is no adult path — only the circumstances of arrival and loss.";
+  } else if (age < 5) {
+    intro = "Death came in early childhood, so the path below is short: the most likely years before that outcome.";
+  } else {
+    intro = `Given ${article} ${econClass} start in ${country.name}, these are the most typical milestones before dying at ${age}.`;
+  }
+
+  return { intro, stages: [...lived, death] };
+}
+
+function pathHeading(stage) {
+  if (stage.label === "Birth" && !stage.death) return "Birth";
+  if (stage.death && stage.age <= 0) return "Death · at birth";
+  if (stage.death) return `Death · age ${stage.age < 1 ? "<1" : stage.age}`;
+  return `${stage.label} · age ~${stage.age}`;
+}
+
+function renderLifePath(path) {
+  const card = document.getElementById("pathCard");
+  const intro = document.getElementById("pathIntro");
+  const list = document.getElementById("pathList");
+  card.hidden = false;
+  intro.textContent = path.intro;
+  list.replaceChildren();
+  for (const stage of path.stages) {
+    const li = document.createElement("li");
+    if (stage.death) li.classList.add("death");
+
+    const ageEl = document.createElement("div");
+    ageEl.className = "path-age";
+    ageEl.textContent = pathHeading(stage);
+
+    const textEl = document.createElement("div");
+    textEl.className = "path-text";
+    textEl.textContent = stage.text;
+
+    li.append(ageEl, textEl);
+    list.appendChild(li);
+  }
+}
 
 /* ---------------------------
    Map rendering
@@ -289,16 +501,21 @@ const subLine = document.getElementById("subLine");
 const aboutText = document.getElementById("aboutText");
 const btn = document.getElementById("rebornBtn");
 
+function deathSummary(age, cause) {
+  if (age <= 0) return `You died at birth from ${cause}. Press Space to be reborn again.`;
+  if (age < 1) return `You died in infancy from ${cause}. Press Space to be reborn again.`;
+  return `You died at ${age} from ${cause}. Press Space to be reborn again.`;
+}
+
 function reborn() {
   const country = pickCountry();
   const econ = pickClass(country.income);
-  const age = sampleAge(country.income, econ);
   const cause = pickCause(country.income, econ);
+  const age = sampleAge(country.income, econ, cause);
 
   mainLine.textContent =
     `You were reborn in ${country.name} into a ${econ} family.`;
-  subLine.textContent =
-    `You died at ${age} from ${cause}. Press Space to be reborn again.`;
+  subLine.textContent = deathSummary(age, cause);
 
   aboutText.innerHTML =
     `Chance of being born in <b>${country.name}</b> if all births were equally likely across people:
@@ -307,6 +524,7 @@ function reborn() {
      Household class drawn: <b>${econ}</b><br/>
      <span style="opacity:.8">Notes: This is illustrative, not predictive. Real outcomes vary widely within each country and class.</span>`;
 
+  renderLifePath(buildLifePath(country, country.income, econ, age, cause));
   highlight(country.iso3);
 }
 
