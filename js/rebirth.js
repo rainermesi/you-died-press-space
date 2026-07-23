@@ -37,11 +37,21 @@
     return entry?.label || id;
   }
 
+  function plainCause(id) {
+    const entry = state.vocab?.causes?.[id];
+    return entry?.plain || entry?.label || id;
+  }
+
   function familyPhrase(strataType, stratumId) {
     return (
       state.vocab?.strataTypes?.[strataType]?.levels?.[stratumId]?.familyPhrase ||
       `a ${stratumId} household`
     );
+  }
+
+  function storyBeat(strataType, stratumId) {
+    const level = state.vocab?.strataTypes?.[strataType]?.levels?.[stratumId];
+    return level?.storyBeat || `You started in ${familyPhrase(strataType, stratumId)}.`;
   }
 
   function shortLabel(strataType, stratumId) {
@@ -242,19 +252,20 @@
     "upper class": 6,
   };
 
-  function deathStage(age, causeLabelText) {
+  function deathStage(age, causeId) {
+    const plain = plainCause(causeId);
     if (age <= 0) {
-      return { age: 0, label: "Death", text: `Died at birth — ${causeLabelText}.`, death: true };
+      return { age: 0, label: "Death", text: `Died at birth — ${plain}.`, death: true };
     }
     if (age < 5) {
       return {
         age,
         label: "Death",
-        text: `Died in early childhood at ${age} from ${causeLabelText}.`,
+        text: `Died in early childhood at ${age} — ${plain}.`,
         death: true,
       };
     }
-    return { age, label: "Death", text: `Died at ${age} from ${causeLabelText}.`, death: true };
+    return { age, label: "Death", text: `Died at ${age} — ${plain}.`, death: true };
   }
 
   function fallbackLifePathStages(outcome) {
@@ -345,7 +356,7 @@
       {
         age: 0,
         label: "Birth",
-        text: `Born in ${name} into ${outcome.familyPhrase} (${income} income band).`,
+        text: `Born in ${name}. ${storyBeat(outcome.stratumType, outcome.stratum)}`,
       },
       { age: 5, label: "Early years", text: childhood },
       { age: 12, label: "Schooling", text: school },
@@ -360,14 +371,14 @@
     const copy = pack.lifePath?.[outcome.stratum];
     const le = pack.lifeExpectancy.byStratum[outcome.stratum];
     const secondaryBit = outcome.secondary
-      ? ` (${shortLabel(outcome.secondary.type, outcome.secondary.id)})`
+      ? ` Income landed in the ${shortLabel(outcome.secondary.type, outcome.secondary.id)}.`
       : "";
     if (!copy) return fallbackLifePathStages(outcome);
     return [
       {
         age: 0,
         label: "Birth",
-        text: `Born in ${pack.name} into ${outcome.familyPhrase}${secondaryBit}.`,
+        text: `Born in ${pack.name}. ${storyBeat(outcome.stratumType, outcome.stratum)}${secondaryBit}`,
       },
       { age: 5, label: "Early years", text: copy.early },
       { age: 12, label: "Schooling", text: copy.school },
@@ -387,7 +398,7 @@
         ? packLifePathStages(outcome)
         : fallbackLifePathStages(outcome);
     const lived = stages.filter((s, i) => i === 0 || s.age < outcome.age);
-    const death = deathStage(outcome.age, outcome.causeLabel);
+    const death = deathStage(outcome.age, outcome.causeId);
 
     let intro;
     if (outcome.age <= 0) {
@@ -452,15 +463,47 @@
       <span style="opacity:.8">Notes: No curated pack for this country yet. Contributions welcome in <code>data/countries/</code>.</span>`;
   }
 
-  function deathSummary(outcome) {
-    const { age, causeLabel: cause } = outcome;
+  function deathBeat(outcome) {
+    const id = outcome.causeId;
+    const plain = plainCause(id);
+    if (id === "suicide") return "You died by suicide.";
+    if (id === "violence") return "Violence ended your life.";
+    if (id === "sids") return "Sudden infant death took you.";
+    if (id === "injury") return "You died from an injury.";
+    if (id === "accident" || id === "transport-accident") {
+      return `You died in ${plain}.`;
+    }
+    if (id === "ill-defined") {
+      return "The cause of death was never clearly recorded.";
+    }
+    return `You died of ${plain}.`;
+  }
+
+  function outcomeHeadline(outcome) {
+    return `Born in ${outcome.country.name}. ${storyBeat(
+      outcome.stratumType,
+      outcome.stratum
+    )}`;
+  }
+
+  function outcomeSubline(outcome) {
+    const cta = "Press Space for another life.";
+    const { age } = outcome;
     if (age <= 0) {
-      return `You died at birth / in infancy from ${cause}. Press Space to be reborn again.`;
+      return `You did not survive birth. ${deathBeat(outcome)} ${cta}`;
     }
     if (age < 5) {
-      return `You died in early childhood at ${age} from ${cause}. Press Space to be reborn again.`;
+      return `You only reached age ${age}. ${deathBeat(outcome)} ${cta}`;
     }
-    return `You died at ${age} from ${cause}. Press Space to be reborn again.`;
+    if (age < 18) {
+      return `You lived to ${age}. ${deathBeat(outcome)} ${cta}`;
+    }
+    return `You lived to ${age}. ${deathBeat(outcome)} ${cta}`;
+  }
+
+  /** @deprecated use outcomeSubline */
+  function deathSummary(outcome) {
+    return outcomeSubline(outcome);
   }
 
   global.Rebirth = {
@@ -475,8 +518,12 @@
     pathHeading,
     aboutLines,
     deathSummary,
+    outcomeHeadline,
+    outcomeSubline,
     shortLabel,
     causeLabel,
+    plainCause,
+    storyBeat,
     pct,
   };
 })(window);

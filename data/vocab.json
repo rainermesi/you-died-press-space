@@ -2,62 +2,81 @@
   "schemaVersion": 1,
   "causes": {
     "cardiovascular": {
-      "label": "a cardiovascular condition"
+      "label": "a cardiovascular condition",
+      "plain": "heart disease"
     },
     "cancer": {
-      "label": "cancer"
+      "label": "cancer",
+      "plain": "cancer"
     },
     "respiratory": {
-      "label": "a respiratory disease"
+      "label": "a respiratory disease",
+      "plain": "lung disease"
     },
     "digestive": {
-      "label": "a digestive-system disease"
+      "label": "a digestive-system disease",
+      "plain": "a digestive disease"
     },
     "perinatal": {
-      "label": "complications originating in the perinatal period"
+      "label": "complications originating in the perinatal period",
+      "plain": "complications around birth"
     },
     "congenital": {
-      "label": "a congenital condition"
+      "label": "a congenital condition",
+      "plain": "a congenital condition"
     },
     "ill-defined": {
-      "label": "unknown or ill-defined causes"
+      "label": "unknown or ill-defined causes",
+      "plain": "causes that were never clearly recorded"
     },
     "injury": {
       "label": "an injury or poisoning",
-      "expandWith": "injuryDetail"
+      "expandWith": "injuryDetail",
+      "plain": "injury"
     },
     "infectious": {
-      "label": "an infectious disease"
+      "label": "an infectious disease",
+      "plain": "an infectious disease"
     },
     "endocrine": {
-      "label": "an endocrine or metabolic disease"
+      "label": "an endocrine or metabolic disease",
+      "plain": "a metabolic disease"
     },
     "nervous": {
-      "label": "a neurodegenerative or nervous-system disease"
+      "label": "a neurodegenerative or nervous-system disease",
+      "plain": "a nervous-system disease"
     },
     "accident": {
-      "label": "an accident"
+      "label": "an accident",
+      "plain": "an accident"
     },
     "transport-accident": {
-      "label": "a transport accident"
+      "label": "a transport accident",
+      "plain": "a traffic accident"
     },
     "suicide": {
-      "label": "suicide"
+      "label": "suicide",
+      "plain": "suicide"
     },
     "sids": {
-      "label": "sudden infant death syndrome"
+      "label": "sudden infant death syndrome",
+      "plain": "sudden infant death"
     },
     "birth-complications": {
-      "label": "complications at birth or early childhood illness"
+      "label": "complications at birth or early childhood illness",
+      "plain": "complications at birth"
     },
     "malnutrition": {
-      "label": "malnutrition-related illness"
+      "label": "malnutrition-related illness",
+      "plain": "malnutrition"
     },
     "violence": {
-      "label": "violence or conflict"
+      "label": "violence or conflict",
+      "plain": "violence"
     },
     "untreated-chronic": {
-      "label": "an untreated chronic condition"
+      "label": "an untreated chronic condition",
+      "plain": "an untreated chronic illness"
     }
   },
   "strataTypes": {
@@ -65,16 +84,19 @@
       "description": "ISCED-aligned education groups used as the primary life-path stratum",
       "levels": {
         "below-upper-secondary": {
-          "shortLabel": "below upper secondary",
-          "familyPhrase": "a household with below upper secondary education"
+          "shortLabel": "left school early",
+          "familyPhrase": "a family where people often left school early",
+          "storyBeat": "In your family, people often left school before finishing secondary school."
         },
         "upper-secondary": {
-          "shortLabel": "upper secondary",
-          "familyPhrase": "a household with upper secondary education"
+          "shortLabel": "finished secondary school",
+          "familyPhrase": "a family where people finished secondary school",
+          "storyBeat": "In your family, people usually finished secondary school, but did not go to university."
         },
         "tertiary": {
-          "shortLabel": "tertiary",
-          "familyPhrase": "a tertiary-educated household"
+          "shortLabel": "went to university",
+          "familyPhrase": "a family where people went to university",
+          "storyBeat": "In your family, people usually went to university."
         }
       }
     },
@@ -83,31 +105,38 @@
       "levels": {
         "underclass": {
           "shortLabel": "underclass",
-          "familyPhrase": "an underclass family"
+          "familyPhrase": "a family with almost no safety net",
+          "storyBeat": "You started with almost no safety net."
         },
         "lower working class": {
           "shortLabel": "lower working class",
-          "familyPhrase": "a lower working class family"
+          "familyPhrase": "a lower-working-class family",
+          "storyBeat": "You started in a lower-working-class home."
         },
         "working class": {
           "shortLabel": "working class",
-          "familyPhrase": "a working class family"
+          "familyPhrase": "a working-class family",
+          "storyBeat": "You started in a working-class home."
         },
         "lower middle class": {
           "shortLabel": "lower middle class",
-          "familyPhrase": "a lower middle class family"
+          "familyPhrase": "a lower-middle-class family",
+          "storyBeat": "You started in a lower-middle-class home."
         },
         "middle class": {
           "shortLabel": "middle class",
-          "familyPhrase": "a middle class family"
+          "familyPhrase": "a middle-class family",
+          "storyBeat": "You started in a middle-class home."
         },
         "upper middle class": {
           "shortLabel": "upper middle class",
-          "familyPhrase": "an upper middle class family"
+          "familyPhrase": "an upper-middle-class family",
+          "storyBeat": "You started in an upper-middle-class home."
         },
         "upper class": {
           "shortLabel": "upper class",
-          "familyPhrase": "an upper class family"
+          "familyPhrase": "a wealthy family",
+          "storyBeat": "You started with unusual wealth and security."
         }
       }
     },
