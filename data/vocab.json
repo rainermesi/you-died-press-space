@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "causes": {
+    "cardiovascular": {
+      "label": "a cardiovascular condition"
+    },
+    "cancer": {
+      "label": "cancer"
+    },
+    "respiratory": {
+      "label": "a respiratory disease"
+    },
+    "digestive": {
+      "label": "a digestive-system disease"
+    },
+    "perinatal": {
+      "label": "complications originating in the perinatal period"
+    },
+    "congenital": {
+      "label": "a congenital condition"
+    },
+    "ill-defined": {
+      "label": "unknown or ill-defined causes"
+    },
+    "injury": {
+      "label": "an injury or poisoning",
+      "expandWith": "injuryDetail"
+    },
+    "infectious": {
+      "label": "an infectious disease"
+    },
+    "endocrine": {
+      "label": "an endocrine or metabolic disease"
+    },
+    "nervous": {
+      "label": "a neurodegenerative or nervous-system disease"
+    },
+    "accident": {
+      "label": "an accident"
+    },
+    "transport-accident": {
+      "label": "a transport accident"
+    },
+    "suicide": {
+      "label": "suicide"
+    },
+    "sids": {
+      "label": "sudden infant death syndrome"
+    },
+    "birth-complications": {
+      "label": "complications at birth or early childhood illness"
+    },
+    "malnutrition": {
+      "label": "malnutrition-related illness"
+    },
+    "violence": {
+      "label": "violence or conflict"
+    },
+    "untreated-chronic": {
+      "label": "an untreated chronic condition"
+    }
+  },
+  "strataTypes": {
+    "education": {
+      "description": "ISCED-aligned education groups used as the primary life-path stratum",
+      "levels": {
+        "below-upper-secondary": {
+          "shortLabel": "below upper secondary",
+          "familyPhrase": "a household with below upper secondary education"
+        },
+        "upper-secondary": {
+          "shortLabel": "upper secondary",
+          "familyPhrase": "a household with upper secondary education"
+        },
+        "tertiary": {
+          "shortLabel": "tertiary",
+          "familyPhrase": "a tertiary-educated household"
+        }
+      }
+    },
+    "class": {
+      "description": "Illustrative social-class labels for countries without curated packs",
+      "levels": {
+        "underclass": {
+          "shortLabel": "underclass",
+          "familyPhrase": "an underclass family"
+        },
+        "lower working class": {
+          "shortLabel": "lower working class",
+          "familyPhrase": "a lower working class family"
+        },
+        "working class": {
+          "shortLabel": "working class",
+          "familyPhrase": "a working class family"
+        },
+        "lower middle class": {
+          "shortLabel": "lower middle class",
+          "familyPhrase": "a lower middle class family"
+        },
+        "middle class": {
+          "shortLabel": "middle class",
+          "familyPhrase": "a middle class family"
+        },
+        "upper middle class": {
+          "shortLabel": "upper middle class",
+          "familyPhrase": "an upper middle class family"
+        },
+        "upper class": {
+          "shortLabel": "upper class",
+          "familyPhrase": "an upper class family"
+        }
+      }
+    },
+    "income-quintile": {
+      "description": "Equivalised disposable income quintiles",
+      "levels": {
+        "Q1": {
+          "shortLabel": "lowest quintile"
+        },
+        "Q2": {
+          "shortLabel": "second quintile"
+        },
+        "Q3": {
+          "shortLabel": "third quintile"
+        },
+        "Q4": {
+          "shortLabel": "fourth quintile"
+        },
+        "Q5": {
+          "shortLabel": "highest quintile"
+        }
+      }
+    }
+  },
+  "incomeBands": [
+    "low",
+    "lower-middle",
+    "upper-middle",
+    "high"
+  ]
+}

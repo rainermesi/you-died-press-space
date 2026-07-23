@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "countries": [
+    {
+      "iso3": "CHN",
+      "name": "China",
+      "populationMillions": 1412.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "IND",
+      "name": "India",
+      "populationMillions": 1428.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "USA",
+      "name": "United States",
+      "populationMillions": 334.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "IDN",
+      "name": "Indonesia",
+      "populationMillions": 276.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "PAK",
+      "name": "Pakistan",
+      "populationMillions": 231.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "NGA",
+      "name": "Nigeria",
+      "populationMillions": 223.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "BRA",
+      "name": "Brazil",
+      "populationMillions": 214.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "BGD",
+      "name": "Bangladesh",
+      "populationMillions": 173.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "RUS",
+      "name": "Russia",
+      "populationMillions": 144.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "MEX",
+      "name": "Mexico",
+      "populationMillions": 128.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "JPN",
+      "name": "Japan",
+      "populationMillions": 124.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "ETH",
+      "name": "Ethiopia",
+      "populationMillions": 123.0,
+      "incomeBand": "low"
+    },
+    {
+      "iso3": "PHL",
+      "name": "Philippines",
+      "populationMillions": 113.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "EGY",
+      "name": "Egypt",
+      "populationMillions": 112.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "VNM",
+      "name": "Vietnam",
+      "populationMillions": 99.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "COD",
+      "name": "DR Congo",
+      "populationMillions": 103.0,
+      "incomeBand": "low"
+    },
+    {
+      "iso3": "TUR",
+      "name": "T\u00fcrkiye",
+      "populationMillions": 85.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "IRN",
+      "name": "Iran",
+      "populationMillions": 86.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "DEU",
+      "name": "Germany",
+      "populationMillions": 84.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "THA",
+      "name": "Thailand",
+      "populationMillions": 71.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "GBR",
+      "name": "United Kingdom",
+      "populationMillions": 68.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "FRA",
+      "name": "France",
+      "populationMillions": 65.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "ITA",
+      "name": "Italy",
+      "populationMillions": 59.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "TZA",
+      "name": "Tanzania",
+      "populationMillions": 67.0,
+      "incomeBand": "low"
+    },
+    {
+      "iso3": "ZAF",
+      "name": "South Africa",
+      "populationMillions": 60.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "KEN",
+      "name": "Kenya",
+      "populationMillions": 55.0,
+      "incomeBand": "lower-middle"
+    },
+    {
+      "iso3": "ESP",
+      "name": "Spain",
+      "populationMillions": 48.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "UKR",
+      "name": "Ukraine",
+      "populationMillions": 37.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "POL",
+      "name": "Poland",
+      "populationMillions": 38.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "CAN",
+      "name": "Canada",
+      "populationMillions": 39.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "AUS",
+      "name": "Australia",
+      "populationMillions": 26.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "NLD",
+      "name": "Netherlands",
+      "populationMillions": 18.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "ROU",
+      "name": "Romania",
+      "populationMillions": 19.0,
+      "incomeBand": "upper-middle"
+    },
+    {
+      "iso3": "SWE",
+      "name": "Sweden",
+      "populationMillions": 10.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "NOR",
+      "name": "Norway",
+      "populationMillions": 5.0,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "EST",
+      "name": "Estonia",
+      "populationMillions": 1.37,
+      "incomeBand": "high"
+    },
+    {
+      "iso3": "UGA",
+      "name": "Uganda",
+      "populationMillions": 49.0,
+      "incomeBand": "low"
+    }
+  ]
+}

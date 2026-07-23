@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "description": "Country packs available for the real-data roller. World mode uses a pack when iso3 is listed here.",
+  "engine": "engine.json",
+  "vocab": "vocab.json",
+  "world": "world.json",
+  "fallback": "fallback.json",
+  "countries": {
+    "EST": "countries/EST.json"
+  }
+}

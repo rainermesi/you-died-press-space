@@ -123,10 +123,10 @@
   <details>
     <summary>Data notes</summary>
     <div style="margin-top:8px">
-      Most countries still use illustrative population/income weights.
-      <b>Estonia</b> uses curated official stats in <code>data/estonia.json</code>
-      (Statistics Estonia life expectancy by education, Eurostat education shares,
-      TAI cause-of-death and infant mortality rates). Sampling is still a game model, not a personal forecast.
+      World mode uses a <b>country pack</b> when one exists under <code>data/countries/</code>,
+      otherwise an illustrative fallback. Shared cause IDs and sampling knobs live in
+      <code>data/vocab.json</code> and <code>data/engine.json</code>.
+      See <code>data/README.md</code> to contribute a country.
     </div>
   </details>
 
@@ -135,438 +135,20 @@
   </p>
 </div>
 
-<!-- D3 + TopoJSON (no build needed) -->
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="js/rebirth.js"></script>
 <script>
-/* ---------------------------
-   Minimal illustrative data
---------------------------- */
-const COUNTRIES = [
-  { iso3: "CHN", name: "China", pop: 1412, income: "upper-middle" },
-  { iso3: "IND", name: "India", pop: 1428, income: "lower-middle" },
-  { iso3: "USA", name: "United States", pop: 334, income: "high" },
-  { iso3: "IDN", name: "Indonesia", pop: 276, income: "lower-middle" },
-  { iso3: "PAK", name: "Pakistan", pop: 231, income: "lower-middle" },
-  { iso3: "NGA", name: "Nigeria", pop: 223, income: "lower-middle" },
-  { iso3: "BRA", name: "Brazil", pop: 214, income: "upper-middle" },
-  { iso3: "BGD", name: "Bangladesh", pop: 173, income: "lower-middle" },
-  { iso3: "RUS", name: "Russia", pop: 144, income: "upper-middle" },
-  { iso3: "MEX", name: "Mexico", pop: 128, income: "upper-middle" },
-  { iso3: "JPN", name: "Japan", pop: 124, income: "high" },
-  { iso3: "ETH", name: "Ethiopia", pop: 123, income: "low" },
-  { iso3: "PHL", name: "Philippines", pop: 113, income: "lower-middle" },
-  { iso3: "EGY", name: "Egypt", pop: 112, income: "lower-middle" },
-  { iso3: "VNM", name: "Vietnam", pop: 99, income: "lower-middle" },
-  { iso3: "COD", name: "DR Congo", pop: 103, income: "low" },
-  { iso3: "TUR", name: "Türkiye", pop: 85, income: "upper-middle" },
-  { iso3: "IRN", name: "Iran", pop: 86, income: "upper-middle" },
-  { iso3: "DEU", name: "Germany", pop: 84, income: "high" },
-  { iso3: "THA", name: "Thailand", pop: 71, income: "upper-middle" },
-  { iso3: "GBR", name: "United Kingdom", pop: 68, income: "high" },
-  { iso3: "FRA", name: "France", pop: 65, income: "high" },
-  { iso3: "ITA", name: "Italy", pop: 59, income: "high" },
-  { iso3: "TZA", name: "Tanzania", pop: 67, income: "low" },
-  { iso3: "ZAF", name: "South Africa", pop: 60, income: "upper-middle" },
-  { iso3: "KEN", name: "Kenya", pop: 55, income: "lower-middle" },
-  { iso3: "ESP", name: "Spain", pop: 48, income: "high" },
-  { iso3: "UKR", name: "Ukraine", pop: 37, income: "upper-middle" },
-  { iso3: "POL", name: "Poland", pop: 38, income: "high" },
-  { iso3: "CAN", name: "Canada", pop: 39, income: "high" },
-  { iso3: "AUS", name: "Australia", pop: 26, income: "high" },
-  { iso3: "NLD", name: "Netherlands", pop: 18, income: "high" },
-  { iso3: "ROU", name: "Romania", pop: 19, income: "upper-middle" },
-  { iso3: "SWE", name: "Sweden", pop: 10, income: "high" },
-  { iso3: "NOR", name: "Norway", pop: 5, income: "high" },
-  { iso3: "EST", name: "Estonia", pop: 1.37, income: "high" },
-  { iso3: "UGA", name: "Uganda", pop: 49, income: "low" },
-];
-
-const CLASS_WEIGHTS = {
-  "low": {
-    "underclass": 0.18, "lower working class": 0.34, "working class": 0.26,
-    "lower middle class": 0.16, "middle class": 0.06, "upper middle class": 0.00, "upper class": 0.00
-  },
-  "lower-middle": {
-    "underclass": 0.08, "lower working class": 0.28, "working class": 0.30,
-    "lower middle class": 0.20, "middle class": 0.11, "upper middle class": 0.02, "upper class": 0.01
-  },
-  "upper-middle": {
-    "underclass": 0.04, "lower working class": 0.16, "working class": 0.26,
-    "lower middle class": 0.24, "middle class": 0.20, "upper middle class": 0.08, "upper class": 0.02
-  },
-  "high": {
-    "underclass": 0.03, "lower working class": 0.10, "working class": 0.20,
-    "lower middle class": 0.22, "middle class": 0.24, "upper middle class": 0.16, "upper class": 0.05
-  },
-};
-
-const LIFE_EXPECTANCY = { "low": 62, "lower-middle": 68, "upper-middle": 73, "high": 80 };
-
-const CAUSES = {
-  "low": [
-    { label: "a preventable infectious disease", weight: 18, classPenalty: 3 },
-    { label: "complications at birth or early childhood illness", weight: 12, classPenalty: 2 },
-    { label: "malnutrition-related illness", weight: 9, classPenalty: 2 },
-    { label: "a road traffic accident", weight: 7 },
-    { label: "violence or conflict", weight: 6 },
-    { label: "a respiratory disease", weight: 6 },
-    { label: "an untreated chronic condition", weight: 7, classPenalty: 2 },
-    { label: "unknown causes", weight: 5 },
-  ],
-  "lower-middle": [
-    { label: "a road traffic accident", weight: 10 },
-    { label: "a cardiovascular condition", weight: 11 },
-    { label: "a respiratory disease", weight: 8 },
-    { label: "a preventable infectious disease", weight: 6, classPenalty: 1 },
-    { label: "cancer", weight: 10 },
-    { label: "complications at birth or early childhood illness", weight: 5, classPenalty: 1 },
-    { label: "violence or conflict", weight: 4 },
-    { label: "unknown causes", weight: 3 },
-  ],
-  "upper-middle": [
-    { label: "a cardiovascular condition", weight: 18 },
-    { label: "cancer", weight: 16 },
-    { label: "a road traffic accident", weight: 7 },
-    { label: "a respiratory disease", weight: 8 },
-    { label: "diabetes-related complications", weight: 7 },
-    { label: "unknown causes", weight: 4 },
-  ],
-  "high": [
-    { label: "cancer", weight: 22 },
-    { label: "a cardiovascular condition", weight: 21 },
-    { label: "a neurodegenerative disease", weight: 5 },
-    { label: "an accident", weight: 6 },
-    { label: "respiratory disease", weight: 5 },
-    { label: "diabetes-related complications", weight: 5 },
-    { label: "unknown causes", weight: 3 },
-  ],
-};
+const mainLine = document.getElementById("mainLine");
+const subLine = document.getElementById("subLine");
+const aboutText = document.getElementById("aboutText");
+const btn = document.getElementById("rebornBtn");
+const scopeSelect = document.getElementById("scopeSelect");
+const countrySelect = document.getElementById("countrySelect");
+const modeHint = document.getElementById("modeHint");
 
 /* ---------------------------
-   Utilities & model
---------------------------- */
-const WORLD_POP = COUNTRIES.reduce((s, c) => s + c.pop, 0);
-let ESTONIA = null; // loaded from data/estonia.json
-
-function weightedChoice(items) {
-  const total = items.reduce((s, it) => s + it.weight, 0);
-  if (total <= 0) return items[items.length - 1];
-  let r = Math.random() * total;
-  for (const it of items) { r -= it.weight; if (r <= 0) return it; }
-  return items[items.length - 1];
-}
-
-function pickCountry() {
-  if (scopeSelect.value === "country") {
-    const locked = COUNTRIES.find(c => c.iso3 === countrySelect.value);
-    if (locked) return locked;
-  }
-  return weightedChoice(COUNTRIES.map(c => ({ ...c, weight: c.pop })));
-}
-
-function pickClass(income) {
-  const entries = Object.entries(CLASS_WEIGHTS[income]).map(([label, w]) => ({label, weight: w}));
-  return weightedChoice(entries).label;
-}
-
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-
-function sampleAge(income, econClass, cause) {
-  // Birth / early-childhood causes should land on early ages.
-  if (cause.includes("birth") || cause.includes("early childhood") || cause.includes("perinatal")) {
-    return Math.random() < 0.55 ? 0 : clamp(Math.round(Math.random() * 4), 1, 4);
-  }
-  if (cause.includes("malnutrition")) {
-    return clamp(Math.round(1 + Math.random() * 12), 1, 14);
-  }
-
-  const base = LIFE_EXPECTANCY[income];
-  const shift = {
-    "underclass": -18, "lower working class": -12, "working class": -8,
-    "lower middle class": -4, "middle class": 0, "upper middle class": +5, "upper class": +8
-  }[econClass];
-  const mean = base + (shift || 0);
-  // ~normal via sum of uniforms
-  const gaussian = (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
-  const age = mean + gaussian * 12;
-  return clamp(Math.round(age), 0, 105);
-}
-
-function pickCause(income, econClass) {
-  const povertyIdx = {
-    "underclass": 1.0, "lower working class": 0.6, "working class": 0.3,
-    "lower middle class": 0.15, "middle class": 0.0, "upper middle class": 0.0, "upper class": 0.0
-  }[econClass] ?? 0;
-  const list = CAUSES[income].map(c => ({...c}));
-  list.forEach(c => { if (c.classPenalty) c.weight += c.classPenalty * povertyIdx; });
-  return weightedChoice(list).label;
-}
-
-function pct(n, d) { return ((n / d) * 100).toFixed(2); }
-
-/* ---------------------------
-   Estonia real-data model
---------------------------- */
-const EDU_FAMILY = {
-  "below-upper-secondary": "a household with below upper secondary education",
-  "upper-secondary": "a household with upper secondary education",
-  "tertiary": "a tertiary-educated household",
-};
-
-function estoniaReady() {
-  return !!ESTONIA;
-}
-
-function pickEstoniaEducation() {
-  const shares = ESTONIA.educationShares;
-  return weightedChoice([
-    { label: "below-upper-secondary", weight: shares["below-upper-secondary"] },
-    { label: "upper-secondary", weight: shares["upper-secondary"] },
-    { label: "tertiary", weight: shares["tertiary"] },
-  ]).label;
-}
-
-function pickEstoniaIncomeQuintile(education) {
-  const row = ESTONIA.incomeGivenEducation[education];
-  return weightedChoice(Object.entries(row).map(([label, weight]) => ({ label, weight }))).label;
-}
-
-function sampleEstoniaAge(education) {
-  // Infant mortality ~1.26 per 1000 live births (TAI SD52, 2024)
-  if (Math.random() < ESTONIA.infantDeathRatePer1000 / 1000) {
-    return 0;
-  }
-  const mean = ESTONIA.lifeExpectancy.byEducation[education];
-  const gaussian = (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
-  return clamp(Math.round(mean + gaussian * 11), 1, 105);
-}
-
-function estoniaAgeBand(age) {
-  return ESTONIA.causesByAge.find(b => age >= b.minAge && age <= b.maxAge)
-    || ESTONIA.causesByAge[ESTONIA.causesByAge.length - 1];
-}
-
-function pickEstoniaCause(age) {
-  if (age <= 0) {
-    return weightedChoice(ESTONIA.infantCauses.map(c => ({ ...c }))).label;
-  }
-  const band = estoniaAgeBand(age);
-  let cause = weightedChoice(band.causes.map(c => ({ ...c }))).label;
-  if (cause === "an injury or poisoning" && band.injuryDetail?.length) {
-    cause = weightedChoice(band.injuryDetail.map(c => ({ ...c }))).label;
-  }
-  return cause;
-}
-
-function rollEstonia() {
-  const education = pickEstoniaEducation();
-  const incomeQuintile = pickEstoniaIncomeQuintile(education);
-  const age = sampleEstoniaAge(education);
-  const cause = pickEstoniaCause(age);
-  return { education, incomeQuintile, age, cause };
-}
-
-/* ---------------------------
-   Most probable life path
-   Stages are the modal (most likely) outcomes for income × class.
-   The path stops at the rolled age of death.
---------------------------- */
-const CLASS_RANK = {
-  "underclass": 0, "lower working class": 1, "working class": 2,
-  "lower middle class": 3, "middle class": 4, "upper middle class": 5, "upper class": 6
-};
-
-function lifePathStages(country, income, econClass, estoniaRoll) {
-  if (country.iso3 === "EST" && ESTONIA && estoniaRoll) {
-    const edu = estoniaRoll.education;
-    const copy = ESTONIA.lifePath[edu];
-    const le = ESTONIA.lifeExpectancy.byEducation[edu];
-    return [
-      { age: 0,  label: "Birth",      text: `Born in Estonia into ${EDU_FAMILY[edu]} (income quintile ${estoniaRoll.incomeQuintile}).` },
-      { age: 5,  label: "Early years", text: copy.early },
-      { age: 12, label: "Schooling",   text: copy.school },
-      { age: 20, label: "Work",        text: copy.work },
-      { age: 30, label: "Family",      text: copy.family },
-      { age: 45, label: "Midlife",     text: `${copy.midlife} (LE at birth for this education group: ${le}).` },
-    ];
-  }
-
-  const rank = CLASS_RANK[econClass];
-  const poor = rank <= 1;
-  const modest = rank <= 3;
-  const affluent = rank >= 5;
-
-  const childhood = {
-    low: poor
-      ? "Scarce food, limited clean water, and little routine medical care."
-      : "Crowded household; basic needs met with frequent interruptions from illness or work.",
-    "lower-middle": poor
-      ? "Basic shelter and food, but school and clinics compete with household costs."
-      : "Urban or peri-urban childhood with patchy public services and family support.",
-    "upper-middle": modest
-      ? "Public schooling and vaccinations; parents stretch income to keep you enrolled."
-      : "Stable housing, regular meals, and access to local clinics and schools.",
-    high: modest
-      ? "Public services cover the essentials; parents work long hours to stay afloat."
-      : "Secure housing, preventive care, and an expectation that childhood is for school.",
-  }[income];
-
-  const school = {
-    low: poor
-      ? "Leave school early — or never enroll — to help with farm, household, or informal work."
-      : "A few years of primary school before work and distance cut studies short.",
-    "lower-middle": poor
-      ? "Primary school if nearby; secondary school is uncommon."
-      : "Finish lower secondary; higher education is rare without scholarships or migration.",
-    "upper-middle": modest
-      ? "Complete secondary school; vocational training or short college is the usual ceiling."
-      : "Secondary school plus college or technical training as the default path.",
-    high: modest
-      ? "Finish secondary school; further study depends on grades, loans, and family help."
-      : affluent
-        ? "Selective schools and university are the expected route."
-        : "Secondary school and a college or apprenticeship track are typical.",
-  }[income];
-
-  const work = {
-    low: poor
-      ? "Informal labor, subsistence farming, or unpaid household work with irregular cash income."
-      : "Low-wage informal or agricultural work; formal jobs are scarce.",
-    "lower-middle": poor
-      ? "Day labor, small trade, or factory/service work with little security."
-      : "Wage work in services, manufacturing, or small business; savings stay thin.",
-    "upper-middle": modest
-      ? "Stable blue- or pink-collar work, or a small family enterprise."
-      : "Skilled employment or a professional track with steadier earnings.",
-    high: modest
-      ? "Service, trade, or administrative work; housing and healthcare dominate the budget."
-      : affluent
-        ? "Professional, managerial, or capital-linked work with high security."
-        : "Steady skilled or professional work in a formal labor market.",
-  }[income];
-
-  const family = {
-    low: "Partner and children arrive early; extended kin share childcare and risk.",
-    "lower-middle": modest
-      ? "Marriage and children in the late teens or early twenties; family buffers shocks."
-      : "Family formation in the twenties; one or two earners support dependents.",
-    "upper-middle": "Partnership and children often wait until work is steadier; smaller households are common.",
-    high: affluent
-      ? "Later partnership, fewer children, and paid childcare or schooling support."
-      : "Partnership and children usually after education or a foothold in work.",
-  }[income];
-
-  const living = {
-    low: poor
-      ? "Rural or dense informal housing; electricity, sanitation, and transport are unreliable."
-      : "Modest dwelling with shared amenities and frequent infrastructure gaps.",
-    "lower-middle": "Dense urban or town housing; public transit and informal markets shape daily life.",
-    "upper-middle": modest
-      ? "Apartment or small house in a growing city; appliances and debt are both common."
-      : "Comfortable urban or suburban housing with reliable utilities.",
-    high: affluent
-      ? "High-amenity neighborhood; private transport and specialist care are normal."
-      : "Adequate housing with reliable utilities; location trades cost against opportunity.",
-  }[income];
-
-  return [
-    { age: 0,  label: "Birth",      text: `Born in ${country.name} into a ${econClass} household (${income} income band).` },
-    { age: 5,  label: "Early years", text: childhood },
-    { age: 12, label: "Schooling",   text: school },
-    { age: 20, label: "Work",        text: work },
-    { age: 30, label: "Family",      text: family },
-    { age: 45, label: "Midlife",     text: living },
-  ];
-}
-
-function deathStage(age, cause) {
-  if (age <= 0) {
-    return {
-      age: 0,
-      label: "Death",
-      text: `Died at birth — ${cause}.`,
-      death: true,
-    };
-  }
-  if (age < 1) {
-    return {
-      age,
-      label: "Death",
-      text: `Died in infancy at under 1 year from ${cause}.`,
-      death: true,
-    };
-  }
-  if (age < 5) {
-    return {
-      age,
-      label: "Death",
-      text: `Died in early childhood at ${age} from ${cause}.`,
-      death: true,
-    };
-  }
-  return {
-    age,
-    label: "Death",
-    text: `Died at ${age} from ${cause}.`,
-    death: true,
-  };
-}
-
-function buildLifePath(country, income, econClass, age, cause, estoniaRoll) {
-  const stages = lifePathStages(country, income, econClass, estoniaRoll);
-  // Keep milestones that typically occur before death; always keep birth.
-  const lived = stages.filter((s, i) => i === 0 || s.age < age);
-  const death = deathStage(age, cause);
-
-  let intro;
-  if (age <= 0) {
-    intro = "This roll ended at birth. There is no adult path — only the circumstances of arrival and loss.";
-  } else if (age < 5) {
-    intro = "Death came in early childhood, so the path below is short: the most likely years before that outcome.";
-  } else if (country.iso3 === "EST" && estoniaRoll) {
-    intro = `Estonia model using official education, income, mortality, and cause-of-death stats. Education group: ${estoniaRoll.education.replace(/-/g, " ")}.`;
-  } else {
-    const article = /^[aeiou]/i.test(econClass) ? "an" : "a";
-    intro = `Given ${article} ${econClass} start in ${country.name}, these are the most typical milestones before dying at ${age}.`;
-  }
-
-  return { intro, stages: [...lived, death] };
-}
-
-function pathHeading(stage) {
-  if (stage.label === "Birth" && !stage.death) return "Birth";
-  if (stage.death && stage.age <= 0) return "Death · at birth";
-  if (stage.death) return `Death · age ${stage.age < 1 ? "<1" : stage.age}`;
-  return `${stage.label} · age ~${stage.age}`;
-}
-
-function renderLifePath(path) {
-  const card = document.getElementById("pathCard");
-  const intro = document.getElementById("pathIntro");
-  const list = document.getElementById("pathList");
-  card.hidden = false;
-  intro.textContent = path.intro;
-  list.replaceChildren();
-  for (const stage of path.stages) {
-    const li = document.createElement("li");
-    if (stage.death) li.classList.add("death");
-
-    const ageEl = document.createElement("div");
-    ageEl.className = "path-age";
-    ageEl.textContent = pathHeading(stage);
-
-    const textEl = document.createElement("div");
-    textEl.className = "path-text";
-    textEl.textContent = stage.text;
-
-    li.append(ageEl, textEl);
-    list.appendChild(li);
-  }
-}
-
-/* ---------------------------
-   Map rendering
+   Map
 --------------------------- */
 const svg = d3.select("#map");
 const g = svg.append("g");
@@ -579,23 +161,23 @@ let selectedISO3 = null;
 function highlight(iso3) {
   selectedISO3 = iso3;
   if (!countryPaths) return;
-  countryPaths.classed("selected", d => d.properties.ISO_A3 === iso3);
+  countryPaths.classed("selected", (d) => d.properties.ISO_A3 === iso3);
 }
 
 async function drawMap() {
-  // World topojson ~110m, cached via CDN
   const topo = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
-    .then(r => r.json());
+    .then((r) => r.json());
   const countries = topojson.feature(topo, topo.objects.countries);
 
-  countryPaths = g.selectAll("path")
+  countryPaths = g
+    .selectAll("path")
     .data(countries.features)
     .join("path")
     .attr("class", "country")
     .attr("d", path)
     .on("click", (_, d) => {
       const iso3 = d.properties.ISO_A3;
-      const match = COUNTRIES.find(c => c.iso3 === iso3);
+      const match = Rebirth.getCountry(iso3);
       if (match) {
         scopeSelect.value = "country";
         countrySelect.value = match.iso3;
@@ -604,34 +186,44 @@ async function drawMap() {
       highlight(iso3);
     });
 
-  // Keep current selection highlighted if any
   if (selectedISO3) highlight(selectedISO3);
 }
 
-drawMap();
-
-/* ---------------------------
-   Game loop wiring
---------------------------- */
-const mainLine = document.getElementById("mainLine");
-const subLine = document.getElementById("subLine");
-const aboutText = document.getElementById("aboutText");
-const btn = document.getElementById("rebornBtn");
-const scopeSelect = document.getElementById("scopeSelect");
-const countrySelect = document.getElementById("countrySelect");
-const modeHint = document.getElementById("modeHint");
+function renderLifePath(pathObj) {
+  const card = document.getElementById("pathCard");
+  const intro = document.getElementById("pathIntro");
+  const list = document.getElementById("pathList");
+  card.hidden = false;
+  intro.textContent = pathObj.intro;
+  list.replaceChildren();
+  for (const stage of pathObj.stages) {
+    const li = document.createElement("li");
+    if (stage.death) li.classList.add("death");
+    const ageEl = document.createElement("div");
+    ageEl.className = "path-age";
+    ageEl.textContent = Rebirth.pathHeading(stage);
+    const textEl = document.createElement("div");
+    textEl.className = "path-text";
+    textEl.textContent = stage.text;
+    li.append(ageEl, textEl);
+    list.appendChild(li);
+  }
+}
 
 function populateCountrySelect() {
-  const sorted = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name));
+  const sorted = [...Rebirth.state.world.countries].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
   countrySelect.replaceChildren();
   for (const c of sorted) {
     const opt = document.createElement("option");
     opt.value = c.iso3;
-    opt.textContent = c.iso3 === "EST" ? `${c.name} (real data)` : c.name;
+    opt.textContent = Rebirth.hasPack(c.iso3)
+      ? `${c.name} (country pack)`
+      : c.name;
     countrySelect.appendChild(opt);
   }
-  // Default locked country to Estonia when entering one-country mode later
-  if ([...countrySelect.options].some(o => o.value === "EST")) {
+  if ([...countrySelect.options].some((o) => o.value === "EST")) {
     countrySelect.value = "EST";
   }
 }
@@ -640,99 +232,34 @@ function syncScopeUI() {
   const oneCountry = scopeSelect.value === "country";
   countrySelect.disabled = !oneCountry;
   if (oneCountry) {
-    const c = COUNTRIES.find(x => x.iso3 === countrySelect.value);
-    const real = c && c.iso3 === "EST" ? " Uses official Estonia stats for education, lifespan, and causes." : "";
-    modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn in <b>${c ? c.name : "the selected country"}</b> only.${real} Click the map to switch country.`;
+    const c = Rebirth.getCountry(countrySelect.value);
+    const packNote =
+      c && Rebirth.hasPack(c.iso3)
+        ? " Uses that country’s curated data pack."
+        : " Uses the illustrative fallback model.";
+    modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn in <b>${
+      c ? c.name : "the selected country"
+    }</b> only.${packNote} Click the map to switch country.`;
     if (c) highlight(c.iso3);
   } else {
-    modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn. Map & outcome are weighted by population and income band.`;
+    modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn. World picks by population; country packs are used when available.`;
   }
-}
-
-populateCountrySelect();
-syncScopeUI();
-scopeSelect.addEventListener("change", syncScopeUI);
-countrySelect.addEventListener("change", syncScopeUI);
-
-function deathSummary(age, cause) {
-  if (age <= 0) {
-    if (cause.includes("perinatal") || cause.includes("congenital") || cause.includes("sudden infant")) {
-      return `You died at birth / in infancy from ${cause}. Press Space to be reborn again.`;
-    }
-    return `You died at birth from ${cause}. Press Space to be reborn again.`;
-  }
-  if (age < 1) return `You died in infancy from ${cause}. Press Space to be reborn again.`;
-  return `You died at ${age} from ${cause}. Press Space to be reborn again.`;
 }
 
 function reborn() {
-  const country = pickCountry();
+  if (!Rebirth.state.ready) return;
   const locked = scopeSelect.value === "country";
-  let econ;
-  let cause;
-  let age;
-  let estoniaRoll = null;
+  const country = Rebirth.pickCountry(scopeSelect.value, countrySelect.value);
+  const outcome = Rebirth.roll(country);
 
-  if (country.iso3 === "EST" && estoniaReady()) {
-    estoniaRoll = rollEstonia();
-    econ = estoniaRoll.education;
-    age = estoniaRoll.age;
-    cause = estoniaRoll.cause;
-    mainLine.textContent =
-      `You were reborn in Estonia into ${EDU_FAMILY[econ]}.`;
-  } else {
-    econ = pickClass(country.income);
-    cause = pickCause(country.income, econ);
-    age = sampleAge(country.income, econ, cause);
-    mainLine.textContent =
-      `You were reborn in ${country.name} into a ${econ} family.`;
-  }
-
-  subLine.textContent = deathSummary(age, cause);
-
-  const chanceLine = locked
-    ? `Country is locked to <b>${country.name}</b> in one-country mode.`
-    : `Chance of being born in <b>${country.name}</b> if all births were equally likely across people:
-       <b>${pct(country.pop, WORLD_POP)}%</b>`;
-
-  let aboutExtra = "";
-  if (estoniaRoll) {
-    const le = ESTONIA.lifeExpectancy.byEducation[estoniaRoll.education];
-    aboutExtra =
-      `Model: <b>Estonia official data</b><br/>
-       Education group: <b>${estoniaRoll.education.replace(/-/g, " ")}</b> (share among 25–64 ≈ ${ESTONIA.educationShares[estoniaRoll.education]}%)<br/>
-       Income quintile given education: <b>${estoniaRoll.incomeQuintile}</b><br/>
-       Life expectancy at birth for this education group: <b>${le}</b> (Stat EE ${ESTONIA.lifeExpectancy.year})<br/>
-       Infant mortality used: <b>${ESTONIA.infantDeathRatePer1000}</b> per 1000 live births (TAI ${ESTONIA.infantDeathRateYear})<br/>
-       Cause sampled from age-specific TAI rates (or infant-cause mix if age 0).<br/>`;
-  } else {
-    aboutExtra =
-      `Country income band: <b>${country.income}</b><br/>
-       Household class drawn: <b>${econ}</b><br/>`;
-  }
-
-  aboutText.innerHTML =
-    `${chanceLine}<br/>
-     ${aboutExtra}
-     <span style="opacity:.8">Notes: This is illustrative sampling from published aggregates, not a prediction for any real person.</span>`;
-
-  renderLifePath(buildLifePath(country, country.income, econ, age, cause, estoniaRoll));
-  highlight(country.iso3);
+  mainLine.textContent = `You were reborn in ${outcome.country.name} into ${outcome.familyPhrase}.`;
+  subLine.textContent = Rebirth.deathSummary(outcome);
+  aboutText.innerHTML = Rebirth.aboutLines(outcome, locked);
+  renderLifePath(Rebirth.buildLifePath(outcome));
+  highlight(outcome.country.iso3);
 }
 
-async function loadEstoniaData() {
-  try {
-    const res = await fetch("data/estonia.json", { cache: "no-cache" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    ESTONIA = await res.json();
-    const est = COUNTRIES.find(c => c.iso3 === "EST");
-    if (est && ESTONIA.populationMillions) est.pop = ESTONIA.populationMillions;
-  } catch (err) {
-    console.warn("Estonia real-data profile failed to load; using generic high-income model.", err);
-    ESTONIA = null;
-  }
-}
-
+btn.disabled = true;
 btn.addEventListener("click", reborn);
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
@@ -740,8 +267,23 @@ window.addEventListener("keydown", (e) => {
     reborn();
   }
 });
+scopeSelect.addEventListener("change", syncScopeUI);
+countrySelect.addEventListener("change", syncScopeUI);
 
-loadEstoniaData();
+Promise.all([Rebirth.load(), drawMap()])
+  .then(() => {
+    populateCountrySelect();
+    syncScopeUI();
+    btn.disabled = false;
+    aboutText.innerHTML = `Loaded <b>${
+      Object.keys(Rebirth.state.catalog.countries).length
+    }</b> country pack(s). World mode uses a pack when available; otherwise the illustrative fallback.`;
+  })
+  .catch((err) => {
+    console.error(err);
+    aboutText.textContent =
+      "Failed to load data packs. Serve this folder over HTTP so data/*.json can load.";
+  });
 </script>
 </body>
 </html>
