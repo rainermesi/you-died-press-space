@@ -252,19 +252,20 @@
     "upper class": 6,
   };
 
-  function deathStage(age, causeLabelText) {
+  function deathStage(age, causeId) {
+    const plain = plainCause(causeId);
     if (age <= 0) {
-      return { age: 0, label: "Death", text: `Died at birth — ${causeLabelText}.`, death: true };
+      return { age: 0, label: "Death", text: `Died at birth — ${plain}.`, death: true };
     }
     if (age < 5) {
       return {
         age,
         label: "Death",
-        text: `Died in early childhood at ${age} from ${causeLabelText}.`,
+        text: `Died in early childhood at ${age} — ${plain}.`,
         death: true,
       };
     }
-    return { age, label: "Death", text: `Died at ${age} from ${causeLabelText}.`, death: true };
+    return { age, label: "Death", text: `Died at ${age} — ${plain}.`, death: true };
   }
 
   function fallbackLifePathStages(outcome) {
@@ -397,7 +398,7 @@
         ? packLifePathStages(outcome)
         : fallbackLifePathStages(outcome);
     const lived = stages.filter((s, i) => i === 0 || s.age < outcome.age);
-    const death = deathStage(outcome.age, outcome.causeLabel);
+    const death = deathStage(outcome.age, outcome.causeId);
 
     let intro;
     if (outcome.age <= 0) {
