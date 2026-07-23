@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "strataType": "class",
+  "lifeExpectancyByIncomeBand": {
+    "low": 62,
+    "lower-middle": 68,
+    "upper-middle": 73,
+    "high": 80
+  },
+  "classWeightsByIncomeBand": {
+    "low": {
+      "underclass": 0.18,
+      "lower working class": 0.34,
+      "working class": 0.26,
+      "lower middle class": 0.16,
+      "middle class": 0.06,
+      "upper middle class": 0.0,
+      "upper class": 0.0
+    },
+    "lower-middle": {
+      "underclass": 0.08,
+      "lower working class": 0.28,
+      "working class": 0.3,
+      "lower middle class": 0.2,
+      "middle class": 0.11,
+      "upper middle class": 0.02,
+      "upper class": 0.01
+    },
+    "upper-middle": {
+      "underclass": 0.04,
+      "lower working class": 0.16,
+      "working class": 0.26,
+      "lower middle class": 0.24,
+      "middle class": 0.2,
+      "upper middle class": 0.08,
+      "upper class": 0.02
+    },
+    "high": {
+      "underclass": 0.03,
+      "lower working class": 0.1,
+      "working class": 0.2,
+      "lower middle class": 0.22,
+      "middle class": 0.24,
+      "upper middle class": 0.16,
+      "upper class": 0.05
+    }
+  },
+  "causesByIncomeBand": {
+    "low": [
+      {
+        "id": "infectious",
+        "weight": 18,
+        "classPenalty": 3
+      },
+      {
+        "id": "birth-complications",
+        "weight": 12,
+        "classPenalty": 2
+      },
+      {
+        "id": "malnutrition",
+        "weight": 9,
+        "classPenalty": 2
+      },
+      {
+        "id": "transport-accident",
+        "weight": 7
+      },
+      {
+        "id": "violence",
+        "weight": 6
+      },
+      {
+        "id": "respiratory",
+        "weight": 6
+      },
+      {
+        "id": "untreated-chronic",
+        "weight": 7,
+        "classPenalty": 2
+      },
+      {
+        "id": "ill-defined",
+        "weight": 5
+      }
+    ],
+    "lower-middle": [
+      {
+        "id": "transport-accident",
+        "weight": 10
+      },
+      {
+        "id": "cardiovascular",
+        "weight": 11
+      },
+      {
+        "id": "respiratory",
+        "weight": 8
+      },
+      {
+        "id": "infectious",
+        "weight": 6,
+        "classPenalty": 1
+      },
+      {
+        "id": "cancer",
+        "weight": 10
+      },
+      {
+        "id": "birth-complications",
+        "weight": 5,
+        "classPenalty": 1
+      },
+      {
+        "id": "violence",
+        "weight": 4
+      },
+      {
+        "id": "ill-defined",
+        "weight": 3
+      }
+    ],
+    "upper-middle": [
+      {
+        "id": "cardiovascular",
+        "weight": 18
+      },
+      {
+        "id": "cancer",
+        "weight": 16
+      },
+      {
+        "id": "transport-accident",
+        "weight": 7
+      },
+      {
+        "id": "respiratory",
+        "weight": 8
+      },
+      {
+        "id": "endocrine",
+        "weight": 7
+      },
+      {
+        "id": "ill-defined",
+        "weight": 4
+      }
+    ],
+    "high": [
+      {
+        "id": "cancer",
+        "weight": 22
+      },
+      {
+        "id": "cardiovascular",
+        "weight": 21
+      },
+      {
+        "id": "nervous",
+        "weight": 5
+      },
+      {
+        "id": "accident",
+        "weight": 6
+      },
+      {
+        "id": "respiratory",
+        "weight": 5
+      },
+      {
+        "id": "endocrine",
+        "weight": 5
+      },
+      {
+        "id": "ill-defined",
+        "weight": 3
+      }
+    ]
+  }
+}

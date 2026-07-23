@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ageNoiseSigma": {
+    "countryPack": 11,
+    "fallback": 12
+  },
+  "fallbackClassLifeExpectancyShift": {
+    "underclass": -18,
+    "lower working class": -12,
+    "working class": -8,
+    "lower middle class": -4,
+    "middle class": 0,
+    "upper middle class": 5,
+    "upper class": 8
+  },
+  "fallbackPovertyIndex": {
+    "underclass": 1.0,
+    "lower working class": 0.6,
+    "working class": 0.3,
+    "lower middle class": 0.15,
+    "middle class": 0.0,
+    "upper middle class": 0.0,
+    "upper class": 0.0
+  },
+  "earlyDeathCauseIds": [
+    "birth-complications",
+    "perinatal",
+    "malnutrition"
+  ]
+}
