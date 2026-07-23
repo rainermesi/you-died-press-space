@@ -21,6 +21,18 @@
   }
   .btn:active { transform: translateY(2px); box-shadow: 0 0 0 0 #000; }
   .hint { opacity: 0.7; font-size: 13px; }
+  .controls {
+    display: flex; gap: 10px; align-items: end; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+  .field label { font-size: 12px; font-weight: 600; }
+  .field select {
+    appearance: none; border: 2px solid #000; background: #fff; color: #000;
+    padding: 8px 12px; border-radius: 12px; font: inherit; font-weight: 600;
+    box-shadow: 4px 4px 0 0 #000; cursor: pointer;
+  }
+  .field select:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
   .mapbox {
     margin-top: 16px; border: 1px solid #0003; border-radius: 16px; overflow: hidden;
     background: #fff;
@@ -68,7 +80,21 @@
     <h1>Rebirth Odds</h1>
     <button id="rebornBtn" class="btn" aria-label="Reborn">Reborn</button>
   </div>
-  <div class="hint">Press <kbd>Space</kbd> to be reborn. Map & outcome are weighted by population and income band.</div>
+  <div class="hint" id="modeHint">Press <kbd>Space</kbd> to be reborn. Map & outcome are weighted by population and income band.</div>
+
+  <div class="controls" role="group" aria-label="Rebirth scope">
+    <div class="field">
+      <label for="scopeSelect">Rebirth scope</label>
+      <select id="scopeSelect">
+        <option value="world">Whole world (population-weighted)</option>
+        <option value="country">One country only</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="countrySelect">Country</label>
+      <select id="countrySelect" disabled></select>
+    </div>
+  </div>
 
   <div class="mapbox">
     <svg id="map" viewBox="0 0 960 500" role="img" aria-label="World map"></svg>
@@ -229,6 +255,10 @@ function weightedChoice(items) {
 }
 
 function pickCountry() {
+  if (scopeSelect.value === "country") {
+    const locked = COUNTRIES.find(c => c.iso3 === countrySelect.value);
+    if (locked) return locked;
+  }
   return weightedChoice(COUNTRIES.map(c => ({ ...c, weight: c.pop })));
 }
 
@@ -483,8 +513,14 @@ async function drawMap() {
     .attr("class", "country")
     .attr("d", path)
     .on("click", (_, d) => {
-      // Allow clicking a country just to highlight it (doesn't affect RNG)
-      highlight(d.properties.ISO_A3);
+      const iso3 = d.properties.ISO_A3;
+      const match = COUNTRIES.find(c => c.iso3 === iso3);
+      if (match) {
+        scopeSelect.value = "country";
+        countrySelect.value = match.iso3;
+        syncScopeUI();
+      }
+      highlight(iso3);
     });
 
   // Keep current selection highlighted if any
@@ -500,6 +536,41 @@ const mainLine = document.getElementById("mainLine");
 const subLine = document.getElementById("subLine");
 const aboutText = document.getElementById("aboutText");
 const btn = document.getElementById("rebornBtn");
+const scopeSelect = document.getElementById("scopeSelect");
+const countrySelect = document.getElementById("countrySelect");
+const modeHint = document.getElementById("modeHint");
+
+function populateCountrySelect() {
+  const sorted = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name));
+  countrySelect.replaceChildren();
+  for (const c of sorted) {
+    const opt = document.createElement("option");
+    opt.value = c.iso3;
+    opt.textContent = c.name;
+    countrySelect.appendChild(opt);
+  }
+  // Default locked country to Estonia when entering one-country mode later
+  if ([...countrySelect.options].some(o => o.value === "EST")) {
+    countrySelect.value = "EST";
+  }
+}
+
+function syncScopeUI() {
+  const oneCountry = scopeSelect.value === "country";
+  countrySelect.disabled = !oneCountry;
+  if (oneCountry) {
+    const c = COUNTRIES.find(x => x.iso3 === countrySelect.value);
+    modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn in <b>${c ? c.name : "the selected country"}</b> only. Class, age, and cause still vary. Click the map to switch country.`;
+    if (c) highlight(c.iso3);
+  } else {
+    modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn. Map & outcome are weighted by population and income band.`;
+  }
+}
+
+populateCountrySelect();
+syncScopeUI();
+scopeSelect.addEventListener("change", syncScopeUI);
+countrySelect.addEventListener("change", syncScopeUI);
 
 function deathSummary(age, cause) {
   if (age <= 0) return `You died at birth from ${cause}. Press Space to be reborn again.`;
@@ -512,14 +583,19 @@ function reborn() {
   const econ = pickClass(country.income);
   const cause = pickCause(country.income, econ);
   const age = sampleAge(country.income, econ, cause);
+  const locked = scopeSelect.value === "country";
 
   mainLine.textContent =
     `You were reborn in ${country.name} into a ${econ} family.`;
   subLine.textContent = deathSummary(age, cause);
 
+  const chanceLine = locked
+    ? `Country is locked to <b>${country.name}</b> in one-country mode.`
+    : `Chance of being born in <b>${country.name}</b> if all births were equally likely across people:
+       <b>${pct(country.pop, WORLD_POP)}%</b>`;
+
   aboutText.innerHTML =
-    `Chance of being born in <b>${country.name}</b> if all births were equally likely across people:
-     <b>${pct(country.pop, WORLD_POP)}%</b><br/>
+    `${chanceLine}<br/>
      Country income band: <b>${country.income}</b><br/>
      Household class drawn: <b>${econ}</b><br/>
      <span style="opacity:.8">Notes: This is illustrative, not predictive. Real outcomes vary widely within each country and class.</span>`;
