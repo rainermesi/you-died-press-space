@@ -54,6 +54,14 @@
     return level?.storyBeat || `You started in ${familyPhrase(strataType, stratumId)}.`;
   }
 
+  function pickStory(value) {
+    if (Array.isArray(value)) {
+      if (!value.length) return "";
+      return value[Math.floor(Math.random() * value.length)];
+    }
+    return value || "";
+  }
+
   function shortLabel(strataType, stratumId) {
     return (
       state.vocab?.strataTypes?.[strataType]?.levels?.[stratumId]?.shortLabel ||
@@ -369,26 +377,23 @@
   function packLifePathStages(outcome) {
     const pack = outcome.pack;
     const copy = pack.lifePath?.[outcome.stratum];
-    const le = pack.lifeExpectancy.byStratum[outcome.stratum];
-    const secondaryBit = outcome.secondary
-      ? ` Income landed in the ${shortLabel(outcome.secondary.type, outcome.secondary.id)}.`
-      : "";
     if (!copy) return fallbackLifePathStages(outcome);
+
+    const moneyBeat = outcome.secondary
+      ? ` ${storyBeat(outcome.secondary.type, outcome.secondary.id)}`
+      : "";
+
     return [
       {
         age: 0,
         label: "Birth",
-        text: `Born in ${pack.name}. ${storyBeat(outcome.stratumType, outcome.stratum)}${secondaryBit}`,
+        text: `Born in ${pack.name}. ${storyBeat(outcome.stratumType, outcome.stratum)}${moneyBeat}`,
       },
-      { age: 5, label: "Early years", text: copy.early },
-      { age: 12, label: "Schooling", text: copy.school },
-      { age: 20, label: "Work", text: copy.work },
-      { age: 30, label: "Family", text: copy.family },
-      {
-        age: 45,
-        label: "Midlife",
-        text: `${copy.midlife} (LE at birth for this group: ${le}).`,
-      },
+      { age: 5, label: "Early years", text: pickStory(copy.early) },
+      { age: 12, label: "Schooling", text: pickStory(copy.school) },
+      { age: 20, label: "Work", text: pickStory(copy.work) },
+      { age: 30, label: "Family", text: pickStory(copy.family) },
+      { age: 45, label: "Midlife", text: pickStory(copy.midlife) },
     ];
   }
 
@@ -403,17 +408,14 @@
     let intro;
     if (outcome.age <= 0) {
       intro =
-        "This roll ended at birth. There is no adult path — only the circumstances of arrival and loss.";
+        "This life ended at the beginning — only a few moments to tell.";
     } else if (outcome.age < 5) {
       intro =
-        "Death came in early childhood, so the path below is short: the most likely years before that outcome.";
+        "This life was short. Here is what little path there was.";
     } else if (outcome.mode === "pack") {
-      intro = `${outcome.country.name} country pack · ${outcome.stratumType}: ${shortLabel(
-        outcome.stratumType,
-        outcome.stratum
-      )}.`;
+      intro = `One possible path through a life in ${outcome.country.name}. Each reroll tells a different version.`;
     } else {
-      intro = `Illustrative fallback for ${outcome.country.name} (${outcome.country.incomeBand} income band).`;
+      intro = `One possible path in ${outcome.country.name}. (No detailed country pack yet — this path is sketched, not curated.)`;
     }
 
     return { intro, stages: [...lived, death] };

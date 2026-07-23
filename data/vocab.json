@@ -144,19 +144,24 @@
       "description": "Equivalised disposable income quintiles",
       "levels": {
         "Q1": {
-          "shortLabel": "lowest quintile"
+          "shortLabel": "lowest income fifth",
+          "storyBeat": "Money was always tight at home."
         },
         "Q2": {
-          "shortLabel": "second quintile"
+          "shortLabel": "lower income fifth",
+          "storyBeat": "There was usually enough for the basics, and not much left over."
         },
         "Q3": {
-          "shortLabel": "third quintile"
+          "shortLabel": "middle income fifth",
+          "storyBeat": "Your family was neither rich nor poor."
         },
         "Q4": {
-          "shortLabel": "fourth quintile"
+          "shortLabel": "higher income fifth",
+          "storyBeat": "The household was comfortably off compared with most."
         },
         "Q5": {
-          "shortLabel": "highest quintile"
+          "shortLabel": "highest income fifth",
+          "storyBeat": "Money was rarely the big worry at home."
         }
       }
     }

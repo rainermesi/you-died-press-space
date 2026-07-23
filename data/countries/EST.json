@@ -1063,25 +1063,95 @@
   ],
   "lifePath": {
     "below-upper-secondary": {
-      "early": "Public healthcare and schooling are available, but family resources and local opportunity still shape early years.",
-      "school": "Basic or incomplete secondary education is common; vocational tracks or early work often follow.",
-      "work": "Work is more often in services, trade, construction, or industry, with thinner savings buffers.",
-      "family": "Partnership and children often arrive without a long tertiary detour; housing costs still dominate.",
-      "midlife": "Life expectancy is materially lower in this education group \u2014 about 73 years on recent official figures."
+      "early": [
+        "You grew up in a small flat on the edge of Narva. Winters meant damp walls and a shared courtyard where the older kids taught you Russian swear words before you learned the Estonian ones.",
+        "Home was a wooden house outside J\u00f5hvi. Your mother worked double shifts; you learned early how to heat the stove and keep quiet when the adults were tired.",
+        "You spent summers with grandparents near Sillam\u00e4e, picking berries for cash while your parents chased work farther west."
+      ],
+      "school": [
+        "School never quite stuck. By fifteen you were skipping afternoons to help a cousin on a construction site, promising yourself you'd go back next term.",
+        "You finished basic school and tried vocational training in Kohtla-J\u00e4rve, then dropped out when the family needed another wage.",
+        "Teachers pushed you toward a trade. You lasted a year at a workshop, then left with a toolkit and no certificate."
+      ],
+      "work": [
+        "You took whatever paid: warehouse shifts in Tallinn, then seasonal work on site, always one month ahead of the rent.",
+        "A relative got you onto a road crew. The money was better than school had ever promised, until your back started complaining.",
+        "You drove vans between Ida-Viru and the capital, living out of a borrowed room and sending cash home when you could."
+      ],
+      "family": [
+        "You moved in with someone you met at work before either of you had a steady plan. The first child arrived sooner than the savings did.",
+        "Family meant a small rented flat, a partner on night shifts, and weekends spent patching what broke before it got expensive.",
+        "You married young, split the bills with relatives nearby, and measured adulthood in overdue invoices and birthday cakes."
+      ],
+      "midlife": [
+        "By your forties the early years showed: thinner health, thinner savings, and a calendar built around whoever would still hire you.",
+        "Friends from school had settled. You were still trading long hours for short security, watching the gap widen.",
+        "Midlife looked like another temporary contract, a cigarette break in a parking lot, and the quiet hope that the kids would finish school properly."
+      ]
     },
     "upper-secondary": {
-      "early": "A typical Estonian childhood with school, family doctor care, and a mix of town or rural settings.",
-      "school": "Upper secondary or vocational education is the modal path.",
-      "work": "Steady employment in the formal labour market is the norm; income sits near the middle of the distribution.",
-      "family": "Family formation often follows after secondary school or early work experience.",
-      "midlife": "Official life expectancy for this education group is close to the national average (~79)."
+      "early": [
+        "You started school in a Tartu suburb, then at twelve your family moved to Viljandi. The new walk was five kilometres each way, and you timed it by the bus you usually missed.",
+        "Childhood was a panel-house staircase in P\u00e4rnu, a football in the courtyard, and a family doctor who knew your surname before you sat down.",
+        "You grew up between Rakvere and the grandparents\u2019 farm. Weekdays meant town school; weekends meant hay, dogs, and falling asleep in the car on the way home.",
+        "Your first years were in Tallinn\u2019s Lasnam\u00e4e: long corridors, a Russian cartoon after dinner, and Estonian homework finished at the kitchen table under a buzzing lamp."
+      ],
+      "school": [
+        "You took the vocational route in Viljandi \u2014 practical classes, a worn workshop coat, and the first feeling that a job might actually follow school.",
+        "Secondary school in Tartu ended with a choice: try university applications or start earning. You chose the diploma and a summer job that turned permanent.",
+        "You boarded weekdays at a gymnasium in Paide, came home Fridays with a bag of laundry, and told yourself the commute was temporary.",
+        "Classmates talked about Tallinn University. You finished secondary school, kept your grades decent, and quietly planned a trade instead."
+      ],
+      "work": [
+        "Your first real job was at a logistics firm outside Tallinn. The shifts were long, the pay predictable, and the coffee machine was always broken.",
+        "You trained as an electrician\u2019s helper, then took calls across Harjumaa \u2014 cold warehouses in winter, attic wiring in summer.",
+        "A factory near Tartu hired you after school. Within a few years you knew every machine noise that meant overtime was coming.",
+        "You worked municipal admin by day and side gigs on weekends, watching colleagues with degrees climb a ladder that never quite appeared for you."
+      ],
+      "family": [
+        "At twenty-eight you moved in with your partner in a rented Khrushchyovka flat. You argued about dishwashers, then about whether to ask parents for a loan.",
+        "The wedding was small \u2014 Viljandi town hall, a borrowed car, and a party that spilled into someone\u2019s garden until morning.",
+        "You had your first child before you owned anything with a deed. Grandparents became the childcare plan that made both jobs possible.",
+        "Family life settled into shifts: kindergarten drop-off, a shared calendar on the fridge, and Sunday soup that tasted like your mother\u2019s even when it didn\u2019t."
+      ],
+      "midlife": [
+        "By forty-five you had a mortgage on a modest house near the edge of town, a car that started most mornings, and the sense that this was the middle of the story.",
+        "Your teens were grown enough to ignore you. Work was steady. Health was \u2018fine\u2019 until the doctor used a longer word.",
+        "You measured success in paid bills and a week in Hiiumaa when the summer prices dipped. It felt ordinary. It also felt hard-won.",
+        "Friends scattered to Tallinn and abroad. You stayed, kept the same employer through two restructures, and joked that predictability was your luxury."
+      ]
     },
     "tertiary": {
-      "early": "Stronger parental education and income odds; Tallinn/Tartu pathways are more common.",
-      "school": "University or applied higher education is the expected route.",
-      "work": "Professional and specialist roles are more typical, with higher odds of top-quintile income.",
-      "family": "Later partnership and fewer children on average; dual-earner households are common.",
-      "midlife": "Highest education group life expectancy in Estonia \u2014 about 83.5 years in recent data."
+      "early": [
+        "You grew up in Kadriorg with piano lessons you half-resented and a bookshelf that made guests comment on your parents.",
+        "Childhood was Tartu through and through: university friends of your parents at dinner, museum Sundays, and the assumption that you would sit the exams one day too.",
+        "Your family moved from Tallinn to a quieter street in Viimsi. You biked to school with kids whose parents all seemed to know each other from work.",
+        "Summers meant Saaremaa with cousins who already talked about study abroad. You learned early that \u2018what next\u2019 meant university, not \u2018whether\u2019."
+      ],
+      "school": [
+        "You finished gymnasium near the top of the class and took a place at the University of Tartu, living first in a cramped dorm that smelled of instant noodles.",
+        "Tallinn University of Technology felt like the obvious door. You studied late in the library and pretended the student loan paperwork was temporary.",
+        "A semester abroad looked good on paper and expensive in practice. You came home fluent in a new city\u2019s transit map and surer about your major.",
+        "You switched programmes once, disappointed your parents briefly, then landed in something that finally matched how your brain worked."
+      ],
+      "work": [
+        "Your first salaried role was in a Tallinn office with bad coffee and a title that sounded bigger than the salary.",
+        "You joined a specialist team where everyone had a degree and a standing desk. Promotions came slowly; the CV filled up anyway.",
+        "Consulting gigs and project contracts blurred together. You learned to translate expertise into invoices before you learned to take holidays.",
+        "Public-sector work gave you stability and a sense of usefulness. Private offers kept arriving in your inbox like weather."
+      ],
+      "family": [
+        "You waited longer than your school friends to settle down. When you did, it was a partnership of calendars, careers, and a flat bought with both names on the loan.",
+        "Children arrived after the degrees and the first proper jobs. Parental leave became a negotiation with employers who smiled too carefully.",
+        "You and your partner split nights and ambition. The baby monitor sat next to a laptop more often than anyone admitted.",
+        "Family looked modern from the outside: dual incomes, a cleaner twice a month, weekends planned weeks ahead."
+      ],
+      "midlife": [
+        "By midlife your life was full of meetings, school emails, and the quiet confidence that the next medical checkup would probably be fine.",
+        "You had the kind of career that still impressed relatives at Christmas, and the kind of stress that never made it into the toast.",
+        "A specialist appointment here, a marathon attempt there \u2014 you treated health like another project until it stopped cooperating.",
+        "Looking back, the path felt almost inevitable: good schools, the right city, work that paid for choices. The hard parts were subtler than money."
+      ]
     }
   }
 }

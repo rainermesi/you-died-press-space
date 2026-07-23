@@ -63,11 +63,11 @@ This folder is the contribution surface for real-world rebirth models.
   ],
   "lifePath": {
     "tertiary": {
-      "early": "...",
-      "school": "...",
-      "work": "...",
-      "family": "...",
-      "midlife": "..."
+      "early": ["First-person story beat...", "Another variant for rerolls..."],
+      "school": ["..."],
+      "work": ["..."],
+      "family": ["..."],
+      "midlife": ["..."]
     }
   }
 }
@@ -80,7 +80,8 @@ This folder is the contribution surface for real-world rebirth models.
 - `lifeExpectancy.byStratum` keys must match `strata.shares`.
 - `causes[].id` / `infantMortality.causes[].id` must exist in `vocab.causes`.
 - Optional `injuryDetail` expands the `injury` cause using vocab IDs.
-- `secondary` is optional (e.g. income quintile given education).
+- `lifePath` stages should be **arrays of first-person story beats**. The app picks one at random each reroll so the path stays readable and fresh. A single string still works, but variants are preferred.
+- Keep statistics (LE, rates, shares) out of the story text — those belong in `lifeExpectancy` / About panel.
 
 ## How the app uses packs
 
