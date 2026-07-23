@@ -84,19 +84,19 @@
       "description": "ISCED-aligned education groups used as the primary life-path stratum",
       "levels": {
         "below-upper-secondary": {
-          "shortLabel": "below upper secondary",
-          "familyPhrase": "a family where school ended early",
-          "storyBeat": "At home, formal schooling usually ended early."
+          "shortLabel": "left school early",
+          "familyPhrase": "a family where people often left school early",
+          "storyBeat": "In your family, people often left school before finishing secondary school."
         },
         "upper-secondary": {
-          "shortLabel": "upper secondary",
-          "familyPhrase": "a secondary-school family",
-          "storyBeat": "Secondary school was the usual finish line at home \u2014 not university."
+          "shortLabel": "finished secondary school",
+          "familyPhrase": "a family where people finished secondary school",
+          "storyBeat": "In your family, people usually finished secondary school, but did not go to university."
         },
         "tertiary": {
-          "shortLabel": "tertiary",
-          "familyPhrase": "a university-educated family",
-          "storyBeat": "University was part of the family picture."
+          "shortLabel": "went to university",
+          "familyPhrase": "a family where people went to university",
+          "storyBeat": "In your family, people usually went to university."
         }
       }
     },
