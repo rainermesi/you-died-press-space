@@ -61,13 +61,34 @@ This folder is the contribution surface for real-world rebirth models.
       "injuryDetail": [{ "id": "accident", "weight": 54.65 }]
     }
   ],
-  "lifePath": {
-    "tertiary": {
-      "early": "...",
-      "school": "...",
-      "work": "...",
-      "family": "...",
-      "midlife": "..."
+  "lifePath": "deprecated — prefer storyBank",
+  "storyBank": {
+    "schemaVersion": 1,
+    "pools": {
+      "city": ["Tallinn", "Tartu"]
+    },
+    "stages": {
+      "early": {
+        "templates": [
+          "You grew up in {home}. {earlyHook}",
+          "Home was {home}. {earlyHook}"
+        ],
+        "slots": {
+          "home": {
+            "byStratum": {
+              "upper-secondary": ["a Tartu suburb", "a courtyard block in Pärnu"]
+            }
+          },
+          "earlyHook": {
+            "byStratum": {
+              "upper-secondary": [
+                "The family doctor knew your surname before you sat down.",
+                "Homework happened at the kitchen table under a buzzing lamp."
+              ]
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -80,7 +101,9 @@ This folder is the contribution surface for real-world rebirth models.
 - `lifeExpectancy.byStratum` keys must match `strata.shares`.
 - `causes[].id` / `infantMortality.causes[].id` must exist in `vocab.causes`.
 - Optional `injuryDetail` expands the `injury` cause using vocab IDs.
-- `secondary` is optional (e.g. income quintile given education).
+- Prefer `storyBank` over static `lifePath` text. The app composes a new sentence each reroll from templates + stratum-weighted slots (and shared `pools`).
+- Slot values may themselves contain `{poolName}` tokens.
+- Keep statistics (LE, rates, shares) out of story text — those belong in `lifeExpectancy` / About panel.
 
 ## How the app uses packs
 
