@@ -1,0 +1,1079 @@
+{
+  "iso3": "EST",
+  "name": "Estonia",
+  "updated": "2026-07-23",
+  "notes": "Curated from Statistics Estonia and TAI open data for gameplay. Illustrative sampling, not an individual forecast.",
+  "sources": [
+    {
+      "id": "RV045",
+      "publisher": "Statistics Estonia",
+      "metric": "Life expectancy at birth by sex",
+      "year": 2025,
+      "url": "https://andmed.stat.ee/en/stat/RV045"
+    },
+    {
+      "id": "RV0454",
+      "publisher": "Statistics Estonia",
+      "metric": "Life expectancy by education",
+      "year": 2025,
+      "url": "https://andmed.stat.ee/en/stat/RV0454"
+    },
+    {
+      "id": "edat_lfse_03",
+      "publisher": "Eurostat",
+      "metric": "Educational attainment 25-64 (EE)",
+      "year": 2024,
+      "url": "https://ec.europa.eu/eurostat/databrowser/view/edat_lfse_03"
+    },
+    {
+      "id": "ST05",
+      "publisher": "Statistics Estonia",
+      "metric": "Income quintile by education",
+      "year": 2024,
+      "url": "https://andmed.stat.ee/en/stat/ST05"
+    },
+    {
+      "id": "SD22",
+      "publisher": "National Institute for Health Development (TAI)",
+      "metric": "Deaths per 100000 by cause, sex, age",
+      "year": 2024,
+      "url": "https://statistika.tai.ee/"
+    },
+    {
+      "id": "SD52",
+      "publisher": "TAI",
+      "metric": "Infant death rate per 1000 live births",
+      "year": 2024,
+      "url": "https://statistika.tai.ee/"
+    },
+    {
+      "id": "SD501",
+      "publisher": "TAI",
+      "metric": "Infant deaths by cause",
+      "year": "2022-2025",
+      "url": "https://statistika.tai.ee/"
+    }
+  ],
+  "populationMillions": 1.37,
+  "income": "high",
+  "lifeExpectancy": {
+    "overall": 79.79,
+    "male": 75.6,
+    "female": 83.57,
+    "byEducation": {
+      "below-upper-secondary": 72.88,
+      "upper-secondary": 79.27,
+      "tertiary": 83.52
+    },
+    "year": 2025
+  },
+  "educationShares": {
+    "below-upper-secondary": 11.2,
+    "upper-secondary": 47.0,
+    "tertiary": 41.8,
+    "year": 2024,
+    "population": "25-64"
+  },
+  "incomeGivenEducation": {
+    "below-upper-secondary": {
+      "Q1": 29.6,
+      "Q2": 27.5,
+      "Q3": 19.9,
+      "Q4": 13.5,
+      "Q5": 9.6
+    },
+    "upper-secondary": {
+      "Q1": 26.0,
+      "Q2": 22.7,
+      "Q3": 21.7,
+      "Q4": 17.3,
+      "Q5": 12.3
+    },
+    "tertiary": {
+      "Q1": 14.2,
+      "Q2": 15.7,
+      "Q3": 16.3,
+      "Q4": 23.2,
+      "Q5": 30.7
+    },
+    "year": 2024
+  },
+  "infantDeathRatePer1000": 1.26,
+  "infantDeathRateYear": 2024,
+  "infantCauses": [
+    {
+      "label": "complications originating in the perinatal period",
+      "weight": 33
+    },
+    {
+      "label": "a congenital condition",
+      "weight": 13
+    },
+    {
+      "label": "an injury or poisoning",
+      "weight": 7
+    },
+    {
+      "label": "unknown or ill-defined causes",
+      "weight": 5
+    },
+    {
+      "label": "sudden infant death syndrome",
+      "weight": 4
+    }
+  ],
+  "causesByAge": [
+    {
+      "label": "0",
+      "minAge": 0,
+      "maxAge": 0,
+      "causes": [
+        {
+          "label": "a cardiovascular condition",
+          "weight": 9.66
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 9.66
+        },
+        {
+          "label": "complications originating in the perinatal period",
+          "weight": 57.93
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 19.31
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 9.66
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 9.66
+        }
+      ],
+      "injuryDetail": []
+    },
+    {
+      "label": "1-9",
+      "minAge": 1,
+      "maxAge": 9,
+      "causes": [
+        {
+          "label": "cancer",
+          "weight": 3.11
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 2.33
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 1.55
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 1.55
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 0.78
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 0.78
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 1.55
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 0.78
+        }
+      ]
+    },
+    {
+      "label": "10-14",
+      "minAge": 10,
+      "maxAge": 14,
+      "causes": [
+        {
+          "label": "cancer",
+          "weight": 2.57
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 1.28
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 7.7
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 5.13
+        },
+        {
+          "label": "a transport accident",
+          "weight": 5.13
+        },
+        {
+          "label": "suicide",
+          "weight": 1.28
+        }
+      ]
+    },
+    {
+      "label": "15-19",
+      "minAge": 15,
+      "maxAge": 19,
+      "causes": [
+        {
+          "label": "cancer",
+          "weight": 3.86
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 1.29
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 2.57
+        },
+        {
+          "label": "complications originating in the perinatal period",
+          "weight": 1.29
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 32.18
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 14.16
+        },
+        {
+          "label": "a transport accident",
+          "weight": 7.72
+        },
+        {
+          "label": "suicide",
+          "weight": 11.58
+        }
+      ]
+    },
+    {
+      "label": "20-24",
+      "minAge": 20,
+      "maxAge": 24,
+      "causes": [
+        {
+          "label": "cancer",
+          "weight": 4.46
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 1.49
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 1.49
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 1.49
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 44.57
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 23.77
+        },
+        {
+          "label": "a transport accident",
+          "weight": 10.4
+        },
+        {
+          "label": "suicide",
+          "weight": 11.88
+        }
+      ]
+    },
+    {
+      "label": "25-29",
+      "minAge": 25,
+      "maxAge": 29,
+      "causes": [
+        {
+          "label": "a cardiovascular condition",
+          "weight": 4.37
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 1.46
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 24.75
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 14.56
+        },
+        {
+          "label": "a transport accident",
+          "weight": 1.46
+        },
+        {
+          "label": "suicide",
+          "weight": 7.28
+        }
+      ]
+    },
+    {
+      "label": "30-34",
+      "minAge": 30,
+      "maxAge": 34,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 2.18
+        },
+        {
+          "label": "cancer",
+          "weight": 13.06
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 2.18
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 6.53
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 6.53
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 2.18
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 7.62
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 1.09
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 1.09
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 51.17
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 31.57
+        },
+        {
+          "label": "a transport accident",
+          "weight": 4.35
+        },
+        {
+          "label": "suicide",
+          "weight": 14.15
+        }
+      ]
+    },
+    {
+      "label": "35-39",
+      "minAge": 35,
+      "maxAge": 39,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 5.54
+        },
+        {
+          "label": "cancer",
+          "weight": 15.69
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 0.92
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 3.69
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 12.92
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 18.46
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 1.85
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 3.69
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 60.9
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 39.68
+        },
+        {
+          "label": "a transport accident",
+          "weight": 3.69
+        },
+        {
+          "label": "suicide",
+          "weight": 17.53
+        }
+      ]
+    },
+    {
+      "label": "40-44",
+      "minAge": 40,
+      "maxAge": 44,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 7.03
+        },
+        {
+          "label": "cancer",
+          "weight": 28.12
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 4.02
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 8.03
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 27.12
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 3.01
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 41.18
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 6.03
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 68.29
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 46.2
+        },
+        {
+          "label": "a transport accident",
+          "weight": 6.03
+        },
+        {
+          "label": "suicide",
+          "weight": 12.05
+        }
+      ]
+    },
+    {
+      "label": "45-49",
+      "minAge": 45,
+      "maxAge": 49,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 11.68
+        },
+        {
+          "label": "cancer",
+          "weight": 54.14
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 5.31
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 16.99
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 46.71
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 1.06
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 57.33
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 1.06
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 12.74
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 84.93
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 49.9
+        },
+        {
+          "label": "a transport accident",
+          "weight": 6.37
+        },
+        {
+          "label": "suicide",
+          "weight": 23.36
+        }
+      ]
+    },
+    {
+      "label": "50-54",
+      "minAge": 50,
+      "maxAge": 54,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 8.58
+        },
+        {
+          "label": "cancer",
+          "weight": 116.88
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 9.65
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 12.87
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 84.71
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 12.87
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 85.78
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 17.16
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 80.42
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 60.05
+        },
+        {
+          "label": "a transport accident",
+          "weight": 6.43
+        },
+        {
+          "label": "suicide",
+          "weight": 13.94
+        }
+      ]
+    },
+    {
+      "label": "55-59",
+      "minAge": 55,
+      "maxAge": 59,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 9.58
+        },
+        {
+          "label": "cancer",
+          "weight": 203.47
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 19.15
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 27.53
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 166.37
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 31.12
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 105.33
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 16.76
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 80.19
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 53.86
+        },
+        {
+          "label": "a transport accident",
+          "weight": 8.38
+        },
+        {
+          "label": "suicide",
+          "weight": 11.97
+        }
+      ]
+    },
+    {
+      "label": "60-64",
+      "minAge": 60,
+      "maxAge": 64,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 9.21
+        },
+        {
+          "label": "cancer",
+          "weight": 380.95
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 28.77
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 29.92
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 362.53
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 56.39
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 108.18
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 1.15
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 23.02
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 103.58
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 66.75
+        },
+        {
+          "label": "a transport accident",
+          "weight": 3.45
+        },
+        {
+          "label": "suicide",
+          "weight": 16.11
+        }
+      ]
+    },
+    {
+      "label": "65-69",
+      "minAge": 65,
+      "maxAge": 69,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 13.36
+        },
+        {
+          "label": "cancer",
+          "weight": 576.81
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 44.93
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 55.86
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 556.17
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 53.43
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 116.58
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 1.21
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 29.14
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 78.93
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 54.65
+        },
+        {
+          "label": "a transport accident",
+          "weight": 4.86
+        },
+        {
+          "label": "suicide",
+          "weight": 12.14
+        }
+      ]
+    },
+    {
+      "label": "70-74",
+      "minAge": 70,
+      "maxAge": 74,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 24.14
+        },
+        {
+          "label": "cancer",
+          "weight": 795.05
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 89.44
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 62.47
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 840.48
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 133.45
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 115.0
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 26.97
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 92.28
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 62.47
+        },
+        {
+          "label": "a transport accident",
+          "weight": 2.84
+        },
+        {
+          "label": "suicide",
+          "weight": 14.2
+        }
+      ]
+    },
+    {
+      "label": "75-79",
+      "minAge": 75,
+      "maxAge": 79,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 19.26
+        },
+        {
+          "label": "cancer",
+          "weight": 1203.45
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 173.3
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 134.79
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 1523.09
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 196.4
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 150.19
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 23.11
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 98.2
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 53.91
+        },
+        {
+          "label": "a transport accident",
+          "weight": 7.7
+        },
+        {
+          "label": "suicide",
+          "weight": 25.03
+        }
+      ]
+    },
+    {
+      "label": "80-84",
+      "minAge": 80,
+      "maxAge": 84,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 87.24
+        },
+        {
+          "label": "cancer",
+          "weight": 1462.48
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 218.09
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 256.57
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 2983.96
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 310.46
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 197.56
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 2.57
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 35.92
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 115.46
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 84.67
+        },
+        {
+          "label": "a transport accident",
+          "weight": 12.83
+        },
+        {
+          "label": "suicide",
+          "weight": 12.83
+        }
+      ]
+    },
+    {
+      "label": "85+",
+      "minAge": 85,
+      "maxAge": 105,
+      "causes": [
+        {
+          "label": "an infectious disease",
+          "weight": 219.42
+        },
+        {
+          "label": "cancer",
+          "weight": 2323.84
+        },
+        {
+          "label": "an endocrine or metabolic disease",
+          "weight": 483.72
+        },
+        {
+          "label": "a neurodegenerative or nervous-system disease",
+          "weight": 364.04
+        },
+        {
+          "label": "a cardiovascular condition",
+          "weight": 8008.78
+        },
+        {
+          "label": "a respiratory disease",
+          "weight": 862.71
+        },
+        {
+          "label": "a digestive-system disease",
+          "weight": 314.17
+        },
+        {
+          "label": "a congenital condition",
+          "weight": 4.99
+        },
+        {
+          "label": "unknown or ill-defined causes",
+          "weight": 104.72
+        },
+        {
+          "label": "an injury or poisoning",
+          "weight": 314.17
+        }
+      ],
+      "injuryDetail": [
+        {
+          "label": "an accident",
+          "weight": 234.38
+        },
+        {
+          "label": "a transport accident",
+          "weight": 9.97
+        },
+        {
+          "label": "suicide",
+          "weight": 34.91
+        }
+      ]
+    }
+  ],
+  "lifePath": {
+    "below-upper-secondary": {
+      "early": "Public healthcare and schooling are available, but family resources and local opportunity still shape early years.",
+      "school": "Basic or incomplete secondary education is common; vocational tracks or early work often follow.",
+      "work": "Work is more often in services, trade, construction, or industry, with thinner savings buffers.",
+      "family": "Partnership and children often arrive without a long tertiary detour; housing costs still dominate.",
+      "midlife": "Life expectancy is materially lower in this education group \u2014 about 73 years on recent official figures."
+    },
+    "upper-secondary": {
+      "early": "A typical Estonian childhood with school, family doctor care, and a mix of town or rural settings.",
+      "school": "Upper secondary or vocational education is the modal path.",
+      "work": "Steady employment in the formal labour market is the norm; income sits near the middle of the distribution.",
+      "family": "Family formation often follows after secondary school or early work experience.",
+      "midlife": "Official life expectancy for this education group is close to the national average (~79)."
+    },
+    "tertiary": {
+      "early": "Stronger parental education and income odds; Tallinn/Tartu pathways are more common.",
+      "school": "University or applied higher education is the expected route.",
+      "work": "Professional and specialist roles are more typical, with higher odds of top-quintile income.",
+      "family": "Later partnership and fewer children on average; dual-earner households are common.",
+      "midlife": "Highest education group life expectancy in Estonia \u2014 about 83.5 years in recent data."
+    }
+  }
+}
