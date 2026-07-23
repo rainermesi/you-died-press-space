@@ -1061,97 +1061,393 @@
       ]
     }
   ],
-  "lifePath": {
-    "below-upper-secondary": {
-      "early": [
-        "You grew up in a small flat on the edge of Narva. Winters meant damp walls and a shared courtyard where the older kids taught you Russian swear words before you learned the Estonian ones.",
-        "Home was a wooden house outside J\u00f5hvi. Your mother worked double shifts; you learned early how to heat the stove and keep quiet when the adults were tired.",
-        "You spent summers with grandparents near Sillam\u00e4e, picking berries for cash while your parents chased work farther west."
+  "storyBank": {
+    "schemaVersion": 1,
+    "notes": "Procedural life-path text. Templates use {slot} tokens. Slots may define byStratum pools and optional default pools.",
+    "pools": {
+      "city": [
+        "Tallinn",
+        "Tartu",
+        "P\u00e4rnu",
+        "Narva",
+        "Viljandi",
+        "Rakvere",
+        "Kuressaare",
+        "V\u00f5ru",
+        "Haapsalu",
+        "Paide"
       ],
-      "school": [
-        "School never quite stuck. By fifteen you were skipping afternoons to help a cousin on a construction site, promising yourself you'd go back next term.",
-        "You finished basic school and tried vocational training in Kohtla-J\u00e4rve, then dropped out when the family needed another wage.",
-        "Teachers pushed you toward a trade. You lasted a year at a workshop, then left with a toolkit and no certificate."
+      "district": [
+        "Lasnam\u00e4e",
+        "Mustam\u00e4e",
+        "\u00d5ism\u00e4e",
+        "Annelinn",
+        "Karlova",
+        "Supilinn",
+        "Kadriorg",
+        "Kristiine"
       ],
-      "work": [
-        "You took whatever paid: warehouse shifts in Tallinn, then seasonal work on site, always one month ahead of the rent.",
-        "A relative got you onto a road crew. The money was better than school had ever promised, until your back started complaining.",
-        "You drove vans between Ida-Viru and the capital, living out of a borrowed room and sending cash home when you could."
+      "islandOrCoast": [
+        "Hiiumaa",
+        "Saaremaa",
+        "the coast near P\u00e4rnu",
+        "a windy stretch outside Haapsalu"
       ],
-      "family": [
-        "You moved in with someone you met at work before either of you had a steady plan. The first child arrived sooner than the savings did.",
-        "Family meant a small rented flat, a partner on night shifts, and weekends spent patching what broke before it got expensive.",
-        "You married young, split the bills with relatives nearby, and measured adulthood in overdue invoices and birthday cakes."
+      "jobCasual": [
+        "warehouse shifts",
+        "shop work",
+        "kitchen shifts",
+        "cleaning jobs",
+        "night security"
       ],
-      "midlife": [
-        "By your forties the early years showed: thinner health, thinner savings, and a calendar built around whoever would still hire you.",
-        "Friends from school had settled. You were still trading long hours for short security, watching the gap widen.",
-        "Midlife looked like another temporary contract, a cigarette break in a parking lot, and the quiet hope that the kids would finish school properly."
+      "jobTrade": [
+        "an electrician's helper",
+        "a warehouse lead",
+        "a factory line",
+        "a municipal desk job",
+        "a logistics firm"
+      ],
+      "jobPro": [
+        "a specialist team in Tallinn",
+        "a public-sector office",
+        "a tech company",
+        "a university-adjacent project",
+        "a consulting desk"
       ]
     },
-    "upper-secondary": {
-      "early": [
-        "You started school in a Tartu suburb, then at twelve your family moved to Viljandi. The new walk was five kilometres each way, and you timed it by the bus you usually missed.",
-        "Childhood was a panel-house staircase in P\u00e4rnu, a football in the courtyard, and a family doctor who knew your surname before you sat down.",
-        "You grew up between Rakvere and the grandparents\u2019 farm. Weekdays meant town school; weekends meant hay, dogs, and falling asleep in the car on the way home.",
-        "Your first years were in Tallinn\u2019s Lasnam\u00e4e: long corridors, a Russian cartoon after dinner, and Estonian homework finished at the kitchen table under a buzzing lamp."
-      ],
-      "school": [
-        "You took the vocational route in Viljandi \u2014 practical classes, a worn workshop coat, and the first feeling that a job might actually follow school.",
-        "Secondary school in Tartu ended with a choice: try university applications or start earning. You chose the diploma and a summer job that turned permanent.",
-        "You boarded weekdays at a gymnasium in Paide, came home Fridays with a bag of laundry, and told yourself the commute was temporary.",
-        "Classmates talked about Tallinn University. You finished secondary school, kept your grades decent, and quietly planned a trade instead."
-      ],
-      "work": [
-        "Your first real job was at a logistics firm outside Tallinn. The shifts were long, the pay predictable, and the coffee machine was always broken.",
-        "You trained as an electrician\u2019s helper, then took calls across Harjumaa \u2014 cold warehouses in winter, attic wiring in summer.",
-        "A factory near Tartu hired you after school. Within a few years you knew every machine noise that meant overtime was coming.",
-        "You worked municipal admin by day and side gigs on weekends, watching colleagues with degrees climb a ladder that never quite appeared for you."
-      ],
-      "family": [
-        "At twenty-eight you moved in with your partner in a rented Khrushchyovka flat. You argued about dishwashers, then about whether to ask parents for a loan.",
-        "The wedding was small \u2014 Viljandi town hall, a borrowed car, and a party that spilled into someone\u2019s garden until morning.",
-        "You had your first child before you owned anything with a deed. Grandparents became the childcare plan that made both jobs possible.",
-        "Family life settled into shifts: kindergarten drop-off, a shared calendar on the fridge, and Sunday soup that tasted like your mother\u2019s even when it didn\u2019t."
-      ],
-      "midlife": [
-        "By forty-five you had a mortgage on a modest house near the edge of town, a car that started most mornings, and the sense that this was the middle of the story.",
-        "Your teens were grown enough to ignore you. Work was steady. Health was \u2018fine\u2019 until the doctor used a longer word.",
-        "You measured success in paid bills and a week in Hiiumaa when the summer prices dipped. It felt ordinary. It also felt hard-won.",
-        "Friends scattered to Tallinn and abroad. You stayed, kept the same employer through two restructures, and joked that predictability was your luxury."
-      ]
-    },
-    "tertiary": {
-      "early": [
-        "You grew up in Kadriorg with piano lessons you half-resented and a bookshelf that made guests comment on your parents.",
-        "Childhood was Tartu through and through: university friends of your parents at dinner, museum Sundays, and the assumption that you would sit the exams one day too.",
-        "Your family moved from Tallinn to a quieter street in Viimsi. You biked to school with kids whose parents all seemed to know each other from work.",
-        "Summers meant Saaremaa with cousins who already talked about study abroad. You learned early that \u2018what next\u2019 meant university, not \u2018whether\u2019."
-      ],
-      "school": [
-        "You finished gymnasium near the top of the class and took a place at the University of Tartu, living first in a cramped dorm that smelled of instant noodles.",
-        "Tallinn University of Technology felt like the obvious door. You studied late in the library and pretended the student loan paperwork was temporary.",
-        "A semester abroad looked good on paper and expensive in practice. You came home fluent in a new city\u2019s transit map and surer about your major.",
-        "You switched programmes once, disappointed your parents briefly, then landed in something that finally matched how your brain worked."
-      ],
-      "work": [
-        "Your first salaried role was in a Tallinn office with bad coffee and a title that sounded bigger than the salary.",
-        "You joined a specialist team where everyone had a degree and a standing desk. Promotions came slowly; the CV filled up anyway.",
-        "Consulting gigs and project contracts blurred together. You learned to translate expertise into invoices before you learned to take holidays.",
-        "Public-sector work gave you stability and a sense of usefulness. Private offers kept arriving in your inbox like weather."
-      ],
-      "family": [
-        "You waited longer than your school friends to settle down. When you did, it was a partnership of calendars, careers, and a flat bought with both names on the loan.",
-        "Children arrived after the degrees and the first proper jobs. Parental leave became a negotiation with employers who smiled too carefully.",
-        "You and your partner split nights and ambition. The baby monitor sat next to a laptop more often than anyone admitted.",
-        "Family looked modern from the outside: dual incomes, a cleaner twice a month, weekends planned weeks ahead."
-      ],
-      "midlife": [
-        "By midlife your life was full of meetings, school emails, and the quiet confidence that the next medical checkup would probably be fine.",
-        "You had the kind of career that still impressed relatives at Christmas, and the kind of stress that never made it into the toast.",
-        "A specialist appointment here, a marathon attempt there \u2014 you treated health like another project until it stopped cooperating.",
-        "Looking back, the path felt almost inevitable: good schools, the right city, work that paid for choices. The hard parts were subtler than money."
-      ]
+    "stages": {
+      "early": {
+        "templates": [
+          "You grew up in {home}. {earlyHook}",
+          "Home was {home}. {earlyHook}",
+          "Your childhood played out in {home}, where {earlyClause}",
+          "You spent your early years between {home} and {secondPlace}. {earlyHook}"
+        ],
+        "slots": {
+          "home": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "a damp flat on the edge of Narva",
+                "a wooden house outside J\u00f5hvi",
+                "a cramped panel-block staircase in Kohtla-J\u00e4rve",
+                "a rented room behind a shop in Sillam\u00e4e",
+                "a house that always needed another repair outside Rakvere"
+              ],
+              "upper-secondary": [
+                "a Tartu suburb with a long walk to the bus",
+                "a courtyard block in P\u00e4rnu",
+                "a Lasnam\u00e4e corridor that smelled of cooking and wet coats",
+                "a small house between Viljandi and the fields",
+                "a third-floor flat in Rakvere above a noisy stairwell"
+              ],
+              "tertiary": [
+                "a bright flat near Kadriorg",
+                "a quiet street in Viimsi",
+                "a book-lined apartment in central Tartu",
+                "a renovated wooden house in Karlova",
+                "a family flat close enough to walk to school without rushing"
+              ]
+            }
+          },
+          "secondPlace": {
+            "default": [
+              "your grandparents' place",
+              "a relative's farm",
+              "the other parent's town",
+              "a summer house that wasn't really a summer house"
+            ],
+            "byStratum": {
+              "below-upper-secondary": [
+                "grandparents near Sillam\u00e4e",
+                "an aunt's overcrowded flat",
+                "a cousin's place whenever rent came due"
+              ],
+              "upper-secondary": [
+                "grandparents' farm on weekends",
+                "a relative in Viljandi",
+                "the seaside for two cheap weeks a year"
+              ],
+              "tertiary": [
+                "Saaremaa in July",
+                "a summer house with a proper pier",
+                "grandparents who corrected your homework"
+              ]
+            }
+          },
+          "earlyHook": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "You learned early which bills could wait and which adults came home too tired to talk.",
+                "Winter meant wet socks drying on radiators and knowing the stove better than your schoolbooks.",
+                "The courtyard kids taught you more than the first years of school did.",
+                "You got used to moving rooms, not neighbourhoods of choice \u2014 rooms of necessity."
+              ],
+              "upper-secondary": [
+                "After school you kicked a ball against the panel-house wall until the neighbours shouted.",
+                "The family doctor knew your surname before you sat down.",
+                "Homework happened at the kitchen table under a buzzing lamp, between dinner and the evening news.",
+                "You measured distance in bus stops and whether you had the fare that week."
+              ],
+              "tertiary": [
+                "Adults at dinner talked about work like it was a puzzle worth solving.",
+                "There were lessons you half-resented and shelves that guests always noticed.",
+                "Nobody asked whether you would continue studying \u2014 only what subject.",
+                "Your weekends filled with clubs, practices, and the quiet pressure of being 'on track.'"
+              ]
+            }
+          },
+          "earlyClause": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "money conversations happened in the next room, never fully out of earshot",
+                "you were useful around the house before you were praised for school",
+                "Russian and Estonian mixed in the stairwell depending on who was shouting"
+              ],
+              "upper-secondary": [
+                "school, a shared courtyard, and a town that felt bigger than it was",
+                "you knew every shortcut to the bus stop by age ten",
+                "weekdays were town and weekends were whoever would take you for free"
+              ],
+              "tertiary": [
+                "the expectation of good grades sat on the table with breakfast",
+                "your friends' parents all seemed to know each other from work",
+                "museum Sundays were normal enough that you pretended to be bored"
+              ]
+            }
+          }
+        }
+      },
+      "school": {
+        "templates": [
+          "At school, {schoolPath} {schoolHook}",
+          "You {schoolPathLower} {schoolHook}",
+          "{schoolPath} {schoolHook}"
+        ],
+        "slots": {
+          "schoolPath": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "you left before the certificates stacked up.",
+                "vocational classes felt more real than theory \u2014 until work pulled harder.",
+                "teachers talked about 'potential' while your timetable filled with absences.",
+                "basic school ended and the next step kept getting postponed."
+              ],
+              "upper-secondary": [
+                "you finished secondary school and chose the practical route.",
+                "a gymnasium diploma came first; university applications came second thoughts.",
+                "vocational training gave you a workshop coat and a sense that a job might follow.",
+                "you boarded weekdays for school and came home Fridays with laundry and stories."
+              ],
+              "tertiary": [
+                "you finished near the top of your class and took a university place.",
+                "exams felt like doors opening rather than walls.",
+                "you moved into student housing with a suitcase and a stubborn study plan.",
+                "a degree programme finally matched how your brain worked \u2014 after one false start."
+              ]
+            }
+          },
+          "schoolPathLower": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "slipped out of school early into paid hours.",
+                "tried a trade course, then disappeared into shifts.",
+                "kept telling yourself you'd return next term."
+              ],
+              "upper-secondary": [
+                "finished secondary school with decent grades and a summer job that stuck.",
+                "took the vocational path and learned more with your hands than from lectures.",
+                "chose earning over another round of entrance exams."
+              ],
+              "tertiary": [
+                "sat the exams everyone expected you to sit.",
+                "filled notebooks in lecture halls that still smelled of dust and ambition.",
+                "treated the library like a second home until graduation."
+              ]
+            }
+          },
+          "schoolHook": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "A toolkit mattered more than a transcript.",
+                "Family needed a wage more than a graduation photo.",
+                "You promised yourself night school. The promise aged badly.",
+                "Classmates vanished into different futures; yours started on a site at 6 a.m."
+              ],
+              "upper-secondary": [
+                "Classmates argued about Tallinn. You argued about bus schedules and apprenticeships.",
+                "The first certificate that felt useful was the one tied to a shift roster.",
+                "You kept one eye on university brochures and both feet on the job board.",
+                "Teachers called it a solid path. You called it the path that paid."
+              ],
+              "tertiary": [
+                "Student loans looked abstract until the first repayment letter.",
+                "A semester away taught you a new city's transit map and a sharper major.",
+                "Group projects, cheap coffee, and the first CV that impressed a stranger.",
+                "Graduation day felt inevitable and still somehow surprising."
+              ]
+            }
+          }
+        }
+      },
+      "work": {
+        "templates": [
+          "Work began with {firstJob}. {workHook}",
+          "Your first real stretch of adulthood was {firstJob}. {workHook}",
+          "You earned your keep through {firstJob}. {workHook}"
+        ],
+        "slots": {
+          "firstJob": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "{jobCasual} that paid weekly and asked no questions",
+                "site work that wrecked your sleep and funded the rent",
+                "van runs between towns, living out of a borrowed room",
+                "whatever shift someone cancelled, taken without pride or complaint"
+              ],
+              "upper-secondary": [
+                "{jobTrade} outside town",
+                "predictable hours at {jobTrade}",
+                "a role that felt permanent until the first restructuring email",
+                "day work on {jobTrade}, weekends on side gigs"
+              ],
+              "tertiary": [
+                "{jobPro} with a title bigger than the salary",
+                "entry into {jobPro}",
+                "project contracts that blurred into a career",
+                "a desk in {jobPro} where everyone had a degree and an opinion"
+              ]
+            }
+          },
+          "workHook": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "You stayed one month ahead of rent and one injury away from trouble.",
+                "The money was better than school had promised, until your body sent the bill.",
+                "Supervisors changed; the ache in your shoulders did not.",
+                "You learned which jobs were 'temporary' for years."
+              ],
+              "upper-secondary": [
+                "The coffee machine was always broken. The overtime was always available.",
+                "You knew every noise on the floor that meant the shift would run late.",
+                "Colleagues with degrees climbed faster. You climbed steadier.",
+                "A second job filled the gaps the first one smiled about."
+              ],
+              "tertiary": [
+                "Promotions came slowly; the CV filled up anyway.",
+                "You learned to translate expertise into invoices before you learned holidays.",
+                "Meetings multiplied. So did the quiet fear of falling behind.",
+                "Work followed you home in email form and refused to knock."
+              ]
+            }
+          }
+        }
+      },
+      "family": {
+        "templates": [
+          "Around the family years, {familySetup} {familyHook}",
+          "{familySetup} {familyHook}",
+          "Home life settled into this: {familySetup} {familyHook}"
+        ],
+        "slots": {
+          "familySetup": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "you moved in with someone before either of you had a plan.",
+                "a child arrived sooner than the savings did.",
+                "you shared a small flat with a partner on night shifts.",
+                "relatives nearby became the only childcare system that worked."
+              ],
+              "upper-secondary": [
+                "you and your partner rented a tired flat and argued about what to buy first.",
+                "a small wedding, a borrowed car, and a party that spilled into a garden.",
+                "the first child came before any deed with your name on it.",
+                "kindergarten drop-offs and a shared calendar on the fridge became the whole plot."
+              ],
+              "tertiary": [
+                "you waited longer than school friends, then built a dual-career household.",
+                "parental leave turned into a negotiation with smiling managers.",
+                "the baby monitor sat next to a laptop more often than anyone admitted.",
+                "both names went on the loan, both careers stayed in the calendar."
+              ]
+            }
+          },
+          "familyHook": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "Love was real. The math was brutal.",
+                "Birthdays meant cake and someone quietly covering the shortfall.",
+                "You measured adulthood in overdue invoices and loyalty that showed up in person.",
+                "The family held together with borrowed time and returned favours."
+              ],
+              "upper-secondary": [
+                "Grandparents made both jobs possible.",
+                "Sunday soup tasted like home even when the recipe wandered.",
+                "You fought about money, then about nothing, then about money again.",
+                "It felt ordinary from the outside and like a full-time job from inside."
+              ],
+              "tertiary": [
+                "From outside it looked modern. From inside it looked scheduled.",
+                "Ambition and affection shared a calendar and occasionally collided.",
+                "You outsourced what you could and still felt behind.",
+                "The family photo looked calm. The week behind it did not."
+              ]
+            }
+          }
+        }
+      },
+      "midlife": {
+        "templates": [
+          "By midlife, {midlifeSetup} {midlifeHook}",
+          "{midlifeSetup} {midlifeHook}",
+          "Looking around at your forties and fifties: {midlifeSetup} {midlifeHook}"
+        ],
+        "slots": {
+          "midlifeSetup": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "the early years had left fingerprints on your health and your options.",
+                "you were still trading long hours for short security.",
+                "friends had settled into lives that looked finished; yours still felt provisional.",
+                "another temporary contract sat on the table like a dare."
+              ],
+              "upper-secondary": [
+                "you had a modest place, a car that started most mornings, and a job you understood too well.",
+                "the kids were old enough to ignore you and young enough to need you.",
+                "predictability had become your quiet luxury.",
+                "a week on {islandOrCoast} when prices dipped felt like winning."
+              ],
+              "tertiary": [
+                "your days filled with meetings, school emails, and checkups you postponed once too often.",
+                "the career still impressed relatives and quietly exhausted you.",
+                "you treated health like another project until it stopped cooperating.",
+                "the path behind you looked almost inevitable \u2014 and harder to admit."
+              ]
+            }
+          },
+          "midlifeHook": {
+            "byStratum": {
+              "below-upper-secondary": [
+                "You hoped the next generation would finish what you couldn't.",
+                "Pride lived in showing up, not in titles.",
+                "The body kept the score even when the CV didn't.",
+                "You told fewer stories about the future and more about getting through the month."
+              ],
+              "upper-secondary": [
+                "It felt ordinary. It also felt hard-won.",
+                "You joked that boredom was a kind of wealth.",
+                "Doctor's appointments started using longer words.",
+                "You stayed while friends scattered to bigger cities and other countries."
+              ],
+              "tertiary": [
+                "The hard parts were subtler than money.",
+                "You had choices \u2014 and the stress that comes with protecting them.",
+                "Success needed maintenance, like a house you couldn't neglect.",
+                "Looking back, privilege and effort were tangled too tightly to separate cleanly."
+              ]
+            }
+          }
+        }
+      }
     }
   }
 }

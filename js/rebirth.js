@@ -62,6 +62,44 @@
     return value || "";
   }
 
+  function pickFromPool(pool) {
+    if (!pool) return "";
+    if (Array.isArray(pool)) return pickStory(pool);
+    return "";
+  }
+
+  function slotOptions(slotDef, stratumId) {
+    if (!slotDef) return [];
+    if (Array.isArray(slotDef)) return slotDef;
+    const byStratum = slotDef.byStratum?.[stratumId];
+    if (byStratum?.length) return byStratum;
+    if (slotDef.default?.length) return slotDef.default;
+    return [];
+  }
+
+  function fillTemplate(template, slots, pools, stratumId, depth = 0) {
+    if (!template || depth > 4) return template || "";
+    return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (_, key) => {
+      if (slots?.[key]) {
+        const chosen = pickFromPool(slotOptions(slots[key], stratumId));
+        return fillTemplate(chosen, slots, pools, stratumId, depth + 1);
+      }
+      if (pools?.[key]) {
+        return pickFromPool(pools[key]);
+      }
+      return `{${key}}`;
+    });
+  }
+
+  function composeStageStory(bank, stageId, stratumId) {
+    const stage = bank?.stages?.[stageId];
+    if (!stage) return "";
+    const template = pickStory(stage.templates);
+    return fillTemplate(template, stage.slots, bank.pools || {}, stratumId)
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
   function shortLabel(strataType, stratumId) {
     return (
       state.vocab?.strataTypes?.[strataType]?.levels?.[stratumId]?.shortLabel ||
@@ -277,13 +315,23 @@
   }
 
   function fallbackLifePathStages(outcome) {
+    const bank = state.fallback?.storyBank;
     const income = outcome.country.incomeBand;
-    const econClass = outcome.stratum;
-    const rank = CLASS_RANK[econClass] ?? 3;
+    const name = outcome.country.name;
+
+    const stageText = (id, legacy) => {
+      if (bank) {
+        const composed = composeStageStory(bank, id, outcome.stratum);
+        if (composed) return composed;
+      }
+      return legacy;
+    };
+
+    // Legacy illustrative blurbs kept as last-resort fill-ins
+    const rank = CLASS_RANK[outcome.stratum] ?? 3;
     const poor = rank <= 1;
     const modest = rank <= 3;
     const affluent = rank >= 5;
-    const name = outcome.country.name;
 
     const childhood = {
       low: poor
@@ -366,22 +414,31 @@
         label: "Birth",
         text: `Born in ${name}. ${storyBeat(outcome.stratumType, outcome.stratum)}`,
       },
-      { age: 5, label: "Early years", text: childhood },
-      { age: 12, label: "Schooling", text: school },
-      { age: 20, label: "Work", text: work },
-      { age: 30, label: "Family", text: family },
-      { age: 45, label: "Midlife", text: living },
+      { age: 5, label: "Early years", text: stageText("early", childhood) },
+      { age: 12, label: "Schooling", text: stageText("school", school) },
+      { age: 20, label: "Work", text: stageText("work", work) },
+      { age: 30, label: "Family", text: stageText("family", family) },
+      { age: 45, label: "Midlife", text: stageText("midlife", living) },
     ];
   }
 
   function packLifePathStages(outcome) {
     const pack = outcome.pack;
-    const copy = pack.lifePath?.[outcome.stratum];
-    if (!copy) return fallbackLifePathStages(outcome);
+    const bank = pack.storyBank;
+    const legacy = pack.lifePath?.[outcome.stratum];
+    if (!bank && !legacy) return fallbackLifePathStages(outcome);
 
     const moneyBeat = outcome.secondary
       ? ` ${storyBeat(outcome.secondary.type, outcome.secondary.id)}`
       : "";
+
+    const stageText = (id) => {
+      if (bank) {
+        const composed = composeStageStory(bank, id, outcome.stratum);
+        if (composed) return composed;
+      }
+      return pickStory(legacy?.[id]);
+    };
 
     return [
       {
@@ -389,11 +446,11 @@
         label: "Birth",
         text: `Born in ${pack.name}. ${storyBeat(outcome.stratumType, outcome.stratum)}${moneyBeat}`,
       },
-      { age: 5, label: "Early years", text: pickStory(copy.early) },
-      { age: 12, label: "Schooling", text: pickStory(copy.school) },
-      { age: 20, label: "Work", text: pickStory(copy.work) },
-      { age: 30, label: "Family", text: pickStory(copy.family) },
-      { age: 45, label: "Midlife", text: pickStory(copy.midlife) },
+      { age: 5, label: "Early years", text: stageText("early") },
+      { age: 12, label: "Schooling", text: stageText("school") },
+      { age: 20, label: "Work", text: stageText("work") },
+      { age: 30, label: "Family", text: stageText("family") },
+      { age: 45, label: "Midlife", text: stageText("midlife") },
     ];
   }
 

@@ -176,5 +176,222 @@
         "weight": 3
       }
     ]
+  },
+  "storyBank": {
+    "schemaVersion": 1,
+    "notes": "Generic procedural sketches for countries without a curated pack. Prefer country-specific storyBanks.",
+    "pools": {
+      "place": [
+        "a crowded neighbourhood",
+        "a small town",
+        "the edge of a city",
+        "a village that felt far from everything"
+      ],
+      "work": [
+        "irregular shifts",
+        "steady but modest work",
+        "a formal job with thin savings",
+        "professional work that followed you home"
+      ]
+    },
+    "stages": {
+      "early": {
+        "templates": [
+          "You grew up in {place}. {hook}",
+          "Childhood meant {place}, where {hook}"
+        ],
+        "slots": {
+          "place": {
+            "default": [
+              "a crowded neighbourhood",
+              "a small town",
+              "the edge of a city",
+              "a village that felt far from everything"
+            ]
+          },
+          "hook": {
+            "byStratum": {
+              "underclass": [
+                "Safety was never assumed.",
+                "You learned scarcity before you learned maps."
+              ],
+              "lower working class": [
+                "Adults worked long and came home quiet.",
+                "The house ran on careful money."
+              ],
+              "working class": [
+                "School and work talk shared the same table.",
+                "You knew the cost of everything early."
+              ],
+              "lower middle class": [
+                "There was enough \u2014 if nobody got sick or fired.",
+                "Ambition and caution argued in the kitchen."
+              ],
+              "middle class": [
+                "Stability felt normal until you saw families without it.",
+                "Weekends had plans; weekdays had routines."
+              ],
+              "upper middle class": [
+                "Options were discussed like weather.",
+                "You were steered toward the 'right' path without drama."
+              ],
+              "upper class": [
+                "Comfort was the background noise of childhood.",
+                "The hard parts, when they came, were rarely about rent."
+              ]
+            }
+          }
+        }
+      },
+      "school": {
+        "templates": [
+          "School went like this: {hook}"
+        ],
+        "slots": {
+          "hook": {
+            "byStratum": {
+              "underclass": [
+                "attendance fought with need.",
+                "certificates were rarer than promises."
+              ],
+              "lower working class": [
+                "you left as soon as paid work made more sense.",
+                "a short course, then the real timetable of shifts."
+              ],
+              "working class": [
+                "you finished what you could and entered work with both eyes open.",
+                "practical skills beat prestige."
+              ],
+              "lower middle class": [
+                "you finished secondary school and kept one door toward more study.",
+                "grades mattered, money mattered more."
+              ],
+              "middle class": [
+                "the expected path was finish school, then decide.",
+                "exams felt like chores with consequences."
+              ],
+              "upper middle class": [
+                "university was the default assumption.",
+                "you collected the credentials your world recognized."
+              ],
+              "upper class": [
+                "elite tracks and private help made the ladder look shorter.",
+                "failure was expensive, but recoverable."
+              ]
+            }
+          }
+        }
+      },
+      "work": {
+        "templates": [
+          "Work meant {work}. {hook}"
+        ],
+        "slots": {
+          "work": {
+            "byStratum": {
+              "underclass": [
+                "whatever paid today"
+              ],
+              "lower working class": [
+                "irregular shifts and physical days"
+              ],
+              "working class": [
+                "steady hours that still felt fragile"
+              ],
+              "lower middle class": [
+                "a formal job with careful budgeting"
+              ],
+              "middle class": [
+                "reliable work and a calendar full of obligations"
+              ],
+              "upper middle class": [
+                "specialist work with status and stress"
+              ],
+              "upper class": [
+                "roles close to money, decision-making, or ownership"
+              ]
+            }
+          },
+          "hook": {
+            "default": [
+              "The years stacked up faster than the plans.",
+              "You got good at lasting.",
+              "Security was never free."
+            ]
+          }
+        }
+      },
+      "family": {
+        "templates": [
+          "{setup} {hook}"
+        ],
+        "slots": {
+          "setup": {
+            "byStratum": {
+              "underclass": [
+                "Family arrived without a safety net."
+              ],
+              "lower working class": [
+                "You built a household out of long hours and nearby relatives."
+              ],
+              "working class": [
+                "Partnership and children reshaped every shift."
+              ],
+              "lower middle class": [
+                "You settled into a small home and a shared budget."
+              ],
+              "middle class": [
+                "Family life became a system of calendars and care."
+              ],
+              "upper middle class": [
+                "You timed family around careers that did not pause easily."
+              ],
+              "upper class": [
+                "Family came with help, expectations, and a public face."
+              ]
+            }
+          },
+          "hook": {
+            "default": [
+              "Love and logistics shared the same rooms.",
+              "The important parts rarely made it onto paper.",
+              "You learned what 'support' actually costs."
+            ]
+          }
+        }
+      },
+      "midlife": {
+        "templates": [
+          "By midlife, {hook}"
+        ],
+        "slots": {
+          "hook": {
+            "byStratum": {
+              "underclass": [
+                "survival skills were still the main inheritance you could offer."
+              ],
+              "lower working class": [
+                "your body kept accounts your pay never did."
+              ],
+              "working class": [
+                "stability felt earned and never quite finished."
+              ],
+              "lower middle class": [
+                "you had enough to fear losing it."
+              ],
+              "middle class": [
+                "ordinary life took maintenance \u2014 health, work, family, all of it."
+              ],
+              "upper middle class": [
+                "success needed protecting as much as celebrating."
+              ],
+              "upper class": [
+                "comfort remained, but control over time and health got thinner."
+              ]
+            }
+          }
+        }
+      }
+    }
   }
 }
