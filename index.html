@@ -252,8 +252,8 @@ function reborn() {
   const country = Rebirth.pickCountry(scopeSelect.value, countrySelect.value);
   const outcome = Rebirth.roll(country);
 
-  mainLine.textContent = `You were reborn in ${outcome.country.name} into ${outcome.familyPhrase}.`;
-  subLine.textContent = Rebirth.deathSummary(outcome);
+  mainLine.textContent = Rebirth.outcomeHeadline(outcome);
+  subLine.textContent = Rebirth.outcomeSubline(outcome);
   aboutText.innerHTML = Rebirth.aboutLines(outcome, locked);
   renderLifePath(Rebirth.buildLifePath(outcome));
   highlight(outcome.country.iso3);
