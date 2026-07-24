@@ -12,6 +12,7 @@ This folder is the contribution surface for real-world rebirth models.
 | `world.json` | World country list (population + income band) |
 | `fallback.json` | Illustrative model when a country has no pack |
 | `countries/XXX.json` | One curated pack per ISO3 code |
+| `life-paths/TEMPLATE.life-path.yaml` | Fillable life-story spec (beats, distributions, pools) |
 
 **Rule of thumb**
 

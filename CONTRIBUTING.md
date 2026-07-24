@@ -11,6 +11,13 @@ Thanks for helping improve Rebirth Odds.
 5. Cite sources in the pack’s `sources` array.
 6. Open a PR.
 
+## Life-path stories (recommended for narrative work)
+
+For randomized, stats-grounded life stories, fill out
+[`data/life-paths/TEMPLATE.life-path.yaml`](data/life-paths/TEMPLATE.life-path.yaml)
+and follow [`data/life-paths/README.md`](data/life-paths/README.md).
+You can hand the completed YAML to an LLM using the built-in `llm_brief`.
+
 ## Architecture (short)
 
 - **World view** picks a country by population (`data/world.json`).
