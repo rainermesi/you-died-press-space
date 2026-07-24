@@ -5,223 +5,260 @@
       "iso3": "CHN",
       "name": "China",
       "populationMillions": 1412.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "156"
     },
     {
       "iso3": "IND",
       "name": "India",
       "populationMillions": 1428.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "356"
     },
     {
       "iso3": "USA",
       "name": "United States",
       "populationMillions": 334.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "840"
     },
     {
       "iso3": "IDN",
       "name": "Indonesia",
       "populationMillions": 276.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "360"
     },
     {
       "iso3": "PAK",
       "name": "Pakistan",
       "populationMillions": 231.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "586"
     },
     {
       "iso3": "NGA",
       "name": "Nigeria",
       "populationMillions": 223.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "566"
     },
     {
       "iso3": "BRA",
       "name": "Brazil",
       "populationMillions": 214.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "076"
     },
     {
       "iso3": "BGD",
       "name": "Bangladesh",
       "populationMillions": 173.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "050"
     },
     {
       "iso3": "RUS",
       "name": "Russia",
       "populationMillions": 144.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "643"
     },
     {
       "iso3": "MEX",
       "name": "Mexico",
       "populationMillions": 128.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "484"
     },
     {
       "iso3": "JPN",
       "name": "Japan",
       "populationMillions": 124.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "392"
     },
     {
       "iso3": "ETH",
       "name": "Ethiopia",
       "populationMillions": 123.0,
-      "incomeBand": "low"
+      "incomeBand": "low",
+      "atlasId": "231"
     },
     {
       "iso3": "PHL",
       "name": "Philippines",
       "populationMillions": 113.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "608"
     },
     {
       "iso3": "EGY",
       "name": "Egypt",
       "populationMillions": 112.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "818"
     },
     {
       "iso3": "VNM",
       "name": "Vietnam",
       "populationMillions": 99.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "704"
     },
     {
       "iso3": "COD",
       "name": "DR Congo",
       "populationMillions": 103.0,
-      "incomeBand": "low"
+      "incomeBand": "low",
+      "atlasId": "180"
     },
     {
       "iso3": "TUR",
       "name": "T\u00fcrkiye",
       "populationMillions": 85.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "792"
     },
     {
       "iso3": "IRN",
       "name": "Iran",
       "populationMillions": 86.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "364"
     },
     {
       "iso3": "DEU",
       "name": "Germany",
       "populationMillions": 84.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "276"
     },
     {
       "iso3": "THA",
       "name": "Thailand",
       "populationMillions": 71.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "764"
     },
     {
       "iso3": "GBR",
       "name": "United Kingdom",
       "populationMillions": 68.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "826"
     },
     {
       "iso3": "FRA",
       "name": "France",
       "populationMillions": 65.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "250"
     },
     {
       "iso3": "ITA",
       "name": "Italy",
       "populationMillions": 59.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "380"
     },
     {
       "iso3": "TZA",
       "name": "Tanzania",
       "populationMillions": 67.0,
-      "incomeBand": "low"
+      "incomeBand": "low",
+      "atlasId": "834"
     },
     {
       "iso3": "ZAF",
       "name": "South Africa",
       "populationMillions": 60.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "710"
     },
     {
       "iso3": "KEN",
       "name": "Kenya",
       "populationMillions": 55.0,
-      "incomeBand": "lower-middle"
+      "incomeBand": "lower-middle",
+      "atlasId": "404"
     },
     {
       "iso3": "ESP",
       "name": "Spain",
       "populationMillions": 48.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "724"
     },
     {
       "iso3": "UKR",
       "name": "Ukraine",
       "populationMillions": 37.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "804"
     },
     {
       "iso3": "POL",
       "name": "Poland",
       "populationMillions": 38.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "616"
     },
     {
       "iso3": "CAN",
       "name": "Canada",
       "populationMillions": 39.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "124"
     },
     {
       "iso3": "AUS",
       "name": "Australia",
       "populationMillions": 26.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "036"
     },
     {
       "iso3": "NLD",
       "name": "Netherlands",
       "populationMillions": 18.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "528"
     },
     {
       "iso3": "ROU",
       "name": "Romania",
       "populationMillions": 19.0,
-      "incomeBand": "upper-middle"
+      "incomeBand": "upper-middle",
+      "atlasId": "642"
     },
     {
       "iso3": "SWE",
       "name": "Sweden",
       "populationMillions": 10.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "752"
     },
     {
       "iso3": "NOR",
       "name": "Norway",
       "populationMillions": 5.0,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "578"
     },
     {
       "iso3": "EST",
       "name": "Estonia",
       "populationMillions": 1.37,
-      "incomeBand": "high"
+      "incomeBand": "high",
+      "atlasId": "233"
     },
     {
       "iso3": "UGA",
       "name": "Uganda",
       "populationMillions": 49.0,
-      "incomeBand": "low"
+      "incomeBand": "low",
+      "atlasId": "800"
     }
   ]
 }
