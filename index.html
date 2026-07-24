@@ -41,6 +41,11 @@
   .country {
     fill: #fff; stroke: #000; stroke-width: 0.5px;
     transition: fill 150ms linear;
+    vector-effect: non-scaling-stroke;
+  }
+  .mapbox svg { overflow: hidden; }
+  #mapFocus {
+    transition: opacity 180ms linear;
   }
   .country:hover { fill: #e5e5e5; }
   .selected { fill: #000 !important; }
@@ -87,12 +92,12 @@
       <label for="scopeSelect">Rebirth scope</label>
       <select id="scopeSelect">
         <option value="world">Whole world (population-weighted)</option>
-        <option value="country">One country only</option>
+        <option value="country" selected>One country only</option>
       </select>
     </div>
     <div class="field">
       <label for="countrySelect">Country</label>
-      <select id="countrySelect" disabled></select>
+      <select id="countrySelect"></select>
     </div>
   </div>
 
@@ -150,24 +155,97 @@ const modeHint = document.getElementById("modeHint");
 /* ---------------------------
    Map
 --------------------------- */
+const MAP_WIDTH = 960;
+const MAP_HEIGHT = 500;
 const svg = d3.select("#map");
-const g = svg.append("g");
-const projection = d3.geoNaturalEarth1().scale(160).translate([480, 250]);
+const g = svg.append("g").attr("id", "mapFocus");
+const projection = d3.geoNaturalEarth1().scale(160).translate([MAP_WIDTH / 2, MAP_HEIGHT / 2]);
 const path = d3.geoPath(projection);
 
 let countryPaths = null;
 let selectedISO3 = null;
+let featuresByAtlasId = new Map();
+let mapReady = false;
+
+function atlasIdForIso3(iso3) {
+  const c = Rebirth.getCountry(iso3);
+  return c?.atlasId != null ? String(c.atlasId) : null;
+}
+
+function iso3ForFeature(feature) {
+  const atlasId = feature.id != null ? String(feature.id) : null;
+  if (!atlasId || !Rebirth.state.world) return null;
+  const match = Rebirth.state.world.countries.find((c) => String(c.atlasId) === atlasId);
+  return match ? match.iso3 : null;
+}
 
 function highlight(iso3) {
   selectedISO3 = iso3;
   if (!countryPaths) return;
-  countryPaths.classed("selected", (d) => d.properties.ISO_A3 === iso3);
+  const atlasId = atlasIdForIso3(iso3);
+  countryPaths.classed("selected", (d) => String(d.id) === atlasId);
+}
+
+function resetMapView(animate = true) {
+  const apply = () => g.attr("transform", null);
+  if (animate && mapReady) {
+    g.transition().duration(700).ease(d3.easeCubicOut).attr("transform", null);
+  } else {
+    apply();
+  }
+}
+
+function zoomToCountry(iso3, animate = true) {
+  if (!iso3) {
+    resetMapView(animate);
+    return;
+  }
+  const atlasId = atlasIdForIso3(iso3);
+  const feature = atlasId ? featuresByAtlasId.get(atlasId) : null;
+  if (!feature) {
+    resetMapView(animate);
+    return;
+  }
+
+  const bounds = path.bounds(feature);
+  const dx = Math.max(bounds[1][0] - bounds[0][0], 1);
+  const dy = Math.max(bounds[1][1] - bounds[0][1], 1);
+  const x = (bounds[0][0] + bounds[1][0]) / 2;
+  const y = (bounds[0][1] + bounds[1][1]) / 2;
+  // Cap zoom so tiny countries (Estonia) fill the frame without clipping too hard
+  const scale = Math.max(1.2, Math.min(14, 0.72 / Math.max(dx / MAP_WIDTH, dy / MAP_HEIGHT)));
+  const translate = [MAP_WIDTH / 2 - scale * x, MAP_HEIGHT / 2 - scale * y];
+  const transform = `translate(${translate[0]},${translate[1]}) scale(${scale})`;
+
+  if (animate && mapReady) {
+    g.transition().duration(750).ease(d3.easeCubicOut).attr("transform", transform);
+  } else {
+    g.attr("transform", transform);
+  }
+}
+
+function syncMapToScope() {
+  if (scopeSelect.value === "country" && countrySelect.value) {
+    highlight(countrySelect.value);
+    zoomToCountry(countrySelect.value);
+  } else if (selectedISO3) {
+    highlight(selectedISO3);
+    // In world mode keep a soft focus on the last rolled country if any
+    zoomToCountry(selectedISO3);
+  } else {
+    resetMapView();
+  }
 }
 
 async function drawMap() {
   const topo = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
     .then((r) => r.json());
   const countries = topojson.feature(topo, topo.objects.countries);
+  featuresByAtlasId = new Map(
+    countries.features
+      .filter((f) => f.id != null)
+      .map((f) => [String(f.id), f])
+  );
 
   countryPaths = g
     .selectAll("path")
@@ -176,16 +254,17 @@ async function drawMap() {
     .attr("class", "country")
     .attr("d", path)
     .on("click", (_, d) => {
-      const iso3 = d.properties.ISO_A3;
-      const match = Rebirth.getCountry(iso3);
-      if (match) {
+      const iso3 = iso3ForFeature(d);
+      if (iso3 && Rebirth.getCountry(iso3)) {
         scopeSelect.value = "country";
-        countrySelect.value = match.iso3;
+        countrySelect.value = iso3;
         syncScopeUI();
+      } else {
+        highlight(iso3);
       }
-      highlight(iso3);
     });
 
+  mapReady = true;
   if (selectedISO3) highlight(selectedISO3);
 }
 
@@ -239,10 +318,14 @@ function syncScopeUI() {
         : " Uses the illustrative fallback model.";
     modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn in <b>${
       c ? c.name : "the selected country"
-    }</b> only.${packNote} Click the map to switch country.`;
-    if (c) highlight(c.iso3);
+    }</b> only.${packNote}`;
+    if (c) {
+      highlight(c.iso3);
+      zoomToCountry(c.iso3);
+    }
   } else {
     modeHint.innerHTML = `Press <kbd>Space</kbd> to be reborn. World picks by population; country packs are used when available.`;
+    resetMapView();
   }
 }
 
@@ -257,6 +340,7 @@ function reborn() {
   aboutText.innerHTML = Rebirth.aboutLines(outcome, locked);
   renderLifePath(Rebirth.buildLifePath(outcome));
   highlight(outcome.country.iso3);
+  zoomToCountry(outcome.country.iso3);
 }
 
 btn.disabled = true;
@@ -273,11 +357,14 @@ countrySelect.addEventListener("change", syncScopeUI);
 Promise.all([Rebirth.load(), drawMap()])
   .then(() => {
     populateCountrySelect();
+    // Default experience: Estonia, zoomed in, ready to roll
+    scopeSelect.value = "country";
+    if ([...countrySelect.options].some((o) => o.value === "EST")) {
+      countrySelect.value = "EST";
+    }
     syncScopeUI();
     btn.disabled = false;
-    aboutText.innerHTML = `Loaded <b>${
-      Object.keys(Rebirth.state.catalog.countries).length
-    }</b> country pack(s). World mode uses a pack when available; otherwise the illustrative fallback.`;
+    reborn();
   })
   .catch((err) => {
     console.error(err);

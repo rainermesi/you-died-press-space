@@ -101,7 +101,7 @@ This folder is the contribution surface for real-world rebirth models.
 - `lifeExpectancy.byStratum` keys must match `strata.shares`.
 - `causes[].id` / `infantMortality.causes[].id` must exist in `vocab.causes`.
 - Optional `injuryDetail` expands the `injury` cause using vocab IDs.
-- Prefer `storyBank` over static `lifePath` text. The app composes a new sentence each reroll from templates + stratum-weighted slots (and shared `pools`).
+- `atlasId` on world countries links to world-atlas numeric ids for map highlight/zoom.
 - Slot values may themselves contain `{poolName}` tokens.
 - Keep statistics (LE, rates, shares) out of story text — those belong in `lifeExpectancy` / About panel.
 
