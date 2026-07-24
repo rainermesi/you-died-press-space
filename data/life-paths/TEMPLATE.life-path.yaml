@@ -1,0 +1,356 @@
+# Life-path contribution template
+#
+# PURPOSE
+#   Fill this out for one country. Then give the completed file to an LLM with:
+#   "Generate / update the country pack + story generator from this life-path spec."
+#
+# HOW TO USE
+#   1. Copy this file → data/life-paths/XX.life-path.yaml (XX = ISO3, e.g. EST)
+#   2. Replace every TODO / null / [] with real content
+#   3. Keep ids stable (snake_case). Labels are player-facing text.
+#   4. Mark each fragment as fact | color (see tags below)
+#   5. Add 3–5 example_rolls you like — those are acceptance tests
+#   6. Pass the filled YAML to an LLM / open a PR
+#
+# TAGS
+#   fact  = must follow rolled distributions / cited stats
+#   color = flavor only; random detail; do NOT imply national rates
+#
+# WEIGHTS
+#   Prefer decimals that sum ~1.0, or any relative weights (engine normalizes).
+#   If unsure, set confidence: rough and note the source.
+#
+# SCOPE TIP
+#   Start with birth → ~age 15. Expand later. Incomplete beats are fine if marked.
+
+schema_version: 1
+
+meta:
+  iso3: "TODO"                     # e.g. EST
+  country_name: "TODO"             # e.g. Estonia
+  language: "en"                   # output language for story text
+  updated: "YYYY-MM-DD"
+  author: "TODO"
+  notes: >
+    TODO: one paragraph on what this pack is trying to capture,
+    known data gaps, and anything contributors should not invent.
+
+voice:
+  person: "second"                 # second = "You were born..."
+  tense: "past"
+  tone: "concrete"                 # concrete | dry | lyrical (prefer concrete)
+  max_sentence_length: 28
+  style_rules:
+    - "No jargon (no 'modal path', 'quintile', 'stratum' in player text)"
+    - "No life-expectancy numbers inside the story (those belong in About)"
+    - "Prefer places, ages, and actions over abstract categories"
+  hard_nos:
+    - "TODO: topics or framings to avoid"
+
+# ---------------------------------------------------------------------------
+# VARIABLES
+# Rolled once (or when first needed) and reused across beats.
+# ---------------------------------------------------------------------------
+variables:
+  region:
+    description: "Birth / childhood region"
+    values:
+      - id: todo_region_1
+        label: "TODO region name"
+        weight: 0.0
+      - id: todo_region_2
+        label: "TODO region name"
+        weight: 0.0
+    source:
+      publisher: "TODO"
+      table_or_url: "TODO"
+      year: null
+      confidence: "rough"          # exact | approximate | rough
+
+  sex:
+    description: "Sex at birth (or as recorded in vital stats)"
+    values:
+      - id: female
+        label: "girl"
+        weight: 0.49
+      - id: male
+        label: "boy"
+        weight: 0.51
+    source:
+      publisher: "TODO"
+      table_or_url: "TODO"
+      year: null
+      confidence: "exact"
+
+  class_level:
+    description: >
+      Socioeconomic start used in story text. Prefer mapping to an existing
+      pack stratum (education / income) rather than inventing a new scale.
+    maps_to_pack_strata: "education"   # education | class | income-quintile | custom
+    values:
+      - id: below_upper_secondary
+        label: "working-class"         # player-facing class phrase; adjust per country
+        pack_stratum_id: "below-upper-secondary"
+        weight: null                   # if null, use country pack strata.shares
+      - id: upper_secondary
+        label: "middle-class"
+        pack_stratum_id: "upper-secondary"
+        weight: null
+      - id: tertiary
+        label: "upper-middle-class"
+        pack_stratum_id: "tertiary"
+        weight: null
+    source:
+      publisher: "TODO"
+      table_or_url: "TODO"
+      year: null
+      confidence: "approximate"
+
+  parents_marital_status:
+    description: "Parents' marital / partnership status around birth"
+    values:
+      - id: married
+        label: "married"
+        weight: 0.0
+      - id: cohabiting
+        label: "living together unmarried"
+        weight: 0.0
+      - id: single_parent
+        label: "a single parent"
+        weight: 0.0
+    source:
+      publisher: "TODO"
+      table_or_url: "TODO"
+      year: null
+      confidence: "rough"
+
+  # Add more shared variables as needed, e.g. urban_rural, ethnicity, language_home
+
+# ---------------------------------------------------------------------------
+# BEATS
+# Ordered life moments. Each beat can lock variables and pick an event.
+# age can be fixed or a range; engine samples within range when needed.
+# ---------------------------------------------------------------------------
+beats:
+  - id: birth
+    title: "Birth"
+    age: 0
+    required: true
+    template: >
+      Born in {region} {country_name} into a {class_level} family.
+      You were born a {sex}. Your parents were {parents_marital_status}.
+    slots:
+      region: { variable: region, tag: fact }
+      country_name: { literal_from: meta.country_name }
+      class_level: { variable: class_level, tag: fact }
+      sex: { variable: sex, tag: fact }
+      parents_marital_status: { variable: parents_marital_status, tag: fact }
+    notes: "Keep this beat factual. Color comes in later beats."
+
+  - id: early_childhood
+    title: "Early childhood"
+    age: { min: 2, max: 5 }
+    required: true
+    template: >
+      When you were {age} old, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: early_childhood_events
+        tag: mixed                    # pool mixes fact + color items
+    notes: "One concrete happening, not a summary of the whole childhood."
+
+  - id: school_years
+    title: "School years"
+    age: { min: 7, max: 15 }
+    required: true
+    template: >
+      At {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: school_events
+        tag: mixed
+    # Optional conditions — only fire if prior rolls match
+    # when:
+    #   class_level: [below_upper_secondary, upper_secondary]
+
+  - id: leaving_school
+    title: "Leaving school / next step"
+    age: { min: 16, max: 20 }
+    required: false
+    template: >
+      Around {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: leaving_school_events
+        tag: mixed
+
+  - id: early_work
+    title: "Early work"
+    age: { min: 18, max: 28 }
+    required: false
+    template: >
+      By {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: early_work_events
+        tag: mixed
+
+  - id: family_formation
+    title: "Family"
+    age: { min: 22, max: 38 }
+    required: false
+    template: >
+      At {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: family_events
+        tag: mixed
+
+  - id: midlife
+    title: "Midlife"
+    age: { min: 40, max: 55 }
+    required: false
+    template: >
+      In your {age}s, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: midlife_events
+        tag: mixed
+
+  # Death beat is usually driven by the mortality engine, not this file.
+  # Optional story coda can be added later.
+
+# ---------------------------------------------------------------------------
+# EVENT POOLS
+# Fragments inserted into {happening}. Use {variables} inside text if needed.
+# weight: relative chance inside the pool (and optional by_class_level).
+# ---------------------------------------------------------------------------
+pools:
+  early_childhood_events:
+    - id: moved_towns
+      tag: color
+      text: "your family moved to {region_move}, and everything familiar disappeared overnight."
+      extra_slots:
+        region_move: { variable: region, tag: color }
+      weight: 1
+    - id: sibling_born
+      tag: color
+      text: "a sibling arrived and the apartment suddenly felt smaller."
+      weight: 1
+    - id: long_illness
+      tag: color
+      text: "you spent weeks in and out of clinics for a stubborn illness."
+      weight: 1
+    - id: TODO_fact_backed
+      tag: fact
+      text: "TODO: replace with a happening that can be weighted by real stats."
+      weight: 0
+      source:
+        publisher: "TODO"
+        table_or_url: "TODO"
+        year: null
+
+  school_events:
+    - id: long_walk_school
+      tag: color
+      text: "you walked a long way to school each morning and knew every shortcut by winter."
+      weight: 1
+    - id: changed_schools
+      tag: color
+      text: "you changed schools and had to start over with a new classroom."
+      weight: 1
+    - id: vocational_pull
+      tag: color
+      text: "teachers pushed you toward a practical track more than university talk."
+      weight: 1
+      # Optional: bias by class
+      by_class_level:
+        below_upper_secondary: 2.0
+        upper_secondary: 1.0
+        tertiary: 0.3
+    - id: TODO_add_more
+      tag: color
+      text: "TODO"
+      weight: 0
+
+  leaving_school_events:
+    - id: TODO
+      tag: color
+      text: "TODO"
+      weight: 1
+
+  early_work_events:
+    - id: TODO
+      tag: color
+      text: "TODO"
+      weight: 1
+
+  family_events:
+    - id: TODO
+      tag: color
+      text: "TODO"
+      weight: 1
+
+  midlife_events:
+    - id: TODO
+      tag: color
+      text: "TODO"
+      weight: 1
+
+# ---------------------------------------------------------------------------
+# EXAMPLE ROLLS (acceptance tests)
+# Write 3–5 full mini-stories you would be happy to ship.
+# The LLM / implementer should be able to produce paths in this shape.
+# ---------------------------------------------------------------------------
+example_rolls:
+  - title: "example_1"
+    rolls:
+      region: todo_region_1
+      sex: female
+      class_level: upper_secondary
+      parents_marital_status: cohabiting
+    output: >
+      Born in TODO region Estonia into a middle-class family. You were born a
+      girl. Your parents were living together unmarried. When you were 4 old,
+      your family moved to another town, and everything familiar disappeared
+      overnight. At 12, you walked a long way to school each morning and knew
+      every shortcut by winter.
+
+  - title: "example_2"
+    rolls: {}
+    output: "TODO: paste another full example you like"
+
+  - title: "example_3"
+    rolls: {}
+    output: "TODO"
+
+# ---------------------------------------------------------------------------
+# LLM IMPLEMENTATION BRIEF
+# Keep this section when asking an LLM to generate code.
+# ---------------------------------------------------------------------------
+llm_brief:
+  goal: >
+    Turn this completed YAML into (1) updates to data/countries/{iso3}.json
+    distributions where applicable, and (2) a life-path generator that rolls
+    variables, walks beats in order, truncates at age-at-death, and composes
+    player-facing text from templates + pools.
+  must:
+    - "Reuse existing vocab cause/stratum IDs where possible"
+    - "Cite sources from variable/pool source blocks in the country pack sources array"
+    - "Honor fact vs color tags"
+    - "Match the voice rules and example_rolls tone"
+    - "Keep About-panel statistics out of the story sentences"
+  must_not:
+    - "Invent national statistics without marking confidence: rough"
+    - "Hardcode only 2–3 full stories per class (compose from pools instead)"
+  deliverables:
+    - "Filled/normalized YAML checked into data/life-paths/{ISO3}.life-path.yaml"
+    - "Country pack changes if new distributions are introduced"
+    - "Generator code wired so each reroll produces a new path"
+    - "3 sample outputs pasted in the PR description"
