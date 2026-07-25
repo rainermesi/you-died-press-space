@@ -1,0 +1,701 @@
+# Estonia life-path spec (stats-first draft)
+# Filled for review. Story flair intentionally plain — edit freely.
+# Primary year for weights: 2024 live births / mothers (unless noted).
+# Counts re-verified against Stat EE + TAI PX-Web APIs on 2026-07-25.
+
+schema_version: 1
+
+meta:
+  iso3: "EST"
+  country_name: "Estonia"
+  language: "en"
+  updated: "2026-07-25"
+  author: "cursor-agent (stats draft for human flair pass)"
+  notes: >
+    Birth-weighted distributions from Statistics Estonia and TAI.
+    Socioeconomic start uses mother's educational level at birth (RV142U),
+    which is the right prior for a newborn — not the adult population education mix.
+    Tallinn is split out of Harju county using RV11U sub-row 784.
+    Mother nationality and country-of-birth are available as fact variables but are
+    NOT in the default birth template (avoid essentializing ethnicity in the opener).
+    Later-life event pools are mostly color stubs for the flair pass;
+    birth variables are fact-backed and should stay stable.
+
+voice:
+  person: "second"
+  tense: "past"
+  tone: "concrete"
+  max_sentence_length: 28
+  style_rules:
+    - "No jargon (no 'modal path', 'quintile', 'stratum' in player text)"
+    - "No life-expectancy numbers inside the story (those belong in About)"
+    - "Prefer places, ages, and actions over abstract categories"
+    - "Keep fact-tagged lines numerically honest even after flair edits"
+  hard_nos:
+    - "Do not invent county birth shares"
+    - "Do not imply that color events are nationally representative"
+    - "Avoid stigmatizing whole regions or ethnic groups"
+    - "Do not put nationality/ethnicity into the birth opener by default"
+
+# ---------------------------------------------------------------------------
+# VARIABLES
+# ---------------------------------------------------------------------------
+variables:
+  region:
+    description: "Mother's county of residence at birth; Tallinn split from Harju"
+    values:
+      - id: tallinn
+        label: "Tallinn"
+        weight: 0.3366
+      - id: harju_excl_tallinn
+        label: "Harju county (outside Tallinn)"
+        weight: 0.1580
+      - id: tartu
+        label: "Tartu county"
+        weight: 0.1485
+      - id: ida_viru
+        label: "Ida-Viru county"
+        weight: 0.0650
+      - id: parnu
+        label: "Pärnu county"
+        weight: 0.0635
+      - id: laane_viru
+        label: "Lääne-Viru county"
+        weight: 0.0418
+      - id: viljandi
+        label: "Viljandi county"
+        weight: 0.0332
+      - id: rapla
+        label: "Rapla county"
+        weight: 0.0252
+      - id: voru
+        label: "Võru county"
+        weight: 0.0215
+      - id: saare
+        label: "Saare county"
+        weight: 0.0196
+      - id: jogev
+        label: "Jõgeva county"
+        weight: 0.0191
+      - id: jarva
+        label: "Järva county"
+        weight: 0.0187
+      - id: valga
+        label: "Valga county"
+        weight: 0.0166
+      - id: polva
+        label: "Põlva county"
+        weight: 0.0144
+      - id: laane
+        label: "Lääne county"
+        weight: 0.0127
+      - id: hiiu
+        label: "Hiiu county"
+        weight: 0.0056
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV11U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV11U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV11U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV11U"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Live births by county, 2024. Tallinn from RV11U row "..Tallinn" (3262);
+        harju_excl_tallinn = Harju county (4793) − Tallinn (3262) = 1531.
+        Denominator = 9690 (Whole country). County-unknown = 0. Weights sum to 1.0.
+
+  sex:
+    description: "Sex of live-born child"
+    values:
+      - id: male
+        label: "boy"
+        weight: 0.5091
+      - id: female
+        label: "girl"
+        weight: 0.4909
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV106"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV106"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV106.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV106"
+      year: 2024
+      confidence: "exact"
+      notes: "Boys 4933, girls 4757, total 9690 (all ethnic nationalities)."
+
+  class_level:
+    description: >
+      Socioeconomic start for the birth story, proxied by mother's educational
+      level at childbirth. Player-facing labels use class language; underlying
+      ids map to pack education strata.
+    maps_to_pack_strata: "education"
+    values:
+      - id: below_upper_secondary
+        label: "a working-class"
+        pack_stratum_id: "below-upper-secondary"
+        weight: 0.1224
+      - id: upper_secondary
+        label: "a middle-class"
+        pack_stratum_id: "upper-secondary"
+        weight: 0.3544
+      - id: tertiary
+        label: "an upper-middle-class"
+        pack_stratum_id: "tertiary"
+        weight: 0.5232
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV142U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV142U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV142U"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Live births by mother's educational level, settlement total, age groups total.
+        Below upper secondary 1185; upper secondary / post-secondary non-tertiary 3432;
+        tertiary 5067. Unknown (6) excluded. Known total 9684.
+
+  parents_marital_status:
+    description: "Mother's marital status among women who gave birth (TAI Medical Birth Register)"
+    values:
+      - id: married
+        label: "married"
+        weight: 0.4677
+      - id: cohabiting
+        label: "living together unmarried"
+        weight: 0.5033
+      - id: single
+        label: "a single mother"
+        weight: 0.0244
+      - id: divorced
+        label: "divorced"
+        weight: 0.0044
+      - id: widowed
+        label: "widowed"
+        weight: 0.0002
+    source:
+      publisher: "National Institute for Health Development (TAI)"
+      table_id: "SR55"
+      table_or_url: "https://statistika.tai.ee/pxweb/en/Andmebaas/Andmebaas__01Rahvastik__02Synnid/SR55.px/"
+      api_url: "https://statistika.tai.ee/api/v1/en/Andmebaas/01Rahvastik/02Synnid/SR55.px"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Women given birth, place of residence = Estonia, nationality = Total.
+        Registered marriage 4375; cohabitation 4708; single 228; divorced 41; widow 2.
+        Unknown (38) excluded. Known n = 9354 (all women = 9392 including unknown).
+        Cross-check: Stat EE RV033 marital births = 46.64% in 2024
+        (https://andmed.stat.ee/en/stat/RV033).
+
+  settlement:
+    description: "Urban/rural settlement region of mother's residence at birth"
+    values:
+      - id: urban
+        label: "a city or town area"
+        weight: 0.7100
+      - id: rural
+        label: "a rural area"
+        weight: 0.2900
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV142U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV142U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV142U"
+      year: 2024
+      confidence: "exact"
+      notes: "City/town settlement region 6880; rural 2810; total 9690."
+
+  mother_age_group:
+    description: "Mother's age group at childbirth (optional; not in default birth template)"
+    values:
+      - id: under_20
+        label: "under 20"
+        weight: 0.0137
+      - id: age_20_24
+        label: "in her early twenties"
+        weight: 0.1009
+      - id: age_25_29
+        label: "in her mid-to-late twenties"
+        weight: 0.2420
+      - id: age_30_34
+        label: "in her early thirties"
+        weight: 0.3364
+      - id: age_35_39
+        label: "in her mid-to-late thirties"
+        weight: 0.2349
+      - id: age_40_plus
+        label: "forty or older"
+        weight: 0.0720
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV142U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV142U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV142U"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Counts: <20 = 133; 20–24 = 978; 25–29 = 2345; 30–34 = 3260; 35–39 = 2276;
+        40+ = 698; total 9690. Mean age at childbirth (RV033) = 31.06;
+        mean age at first child = 28.93.
+
+  mother_born_in:
+    description: "Mother's country of birth (optional; not in default birth template)"
+    values:
+      - id: estonia
+        label: "born in Estonia"
+        weight: 0.8699
+      - id: foreign_eu
+        label: "born in another EU country"
+        weight: 0.0124
+      - id: foreign_non_eu
+        label: "born outside the EU"
+        weight: 0.1178
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV115"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV115"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV115.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV115"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Mother's country of birth, age groups total: Estonia 8429; foreign 1261
+        (EU except EE 120; non-EU 1141); unknown 0; total 9690.
+
+  mother_nationality:
+    description: >
+      Mother's nationality among women who gave birth (TAI). Optional for
+      conditional color later — do not put in the birth opener by default.
+    values:
+      - id: estonian
+        label: "Estonian"
+        weight: 0.7296
+      - id: russian
+        label: "Russian"
+        weight: 0.1666
+      - id: other
+        label: "another nationality"
+        weight: 0.1038
+    source:
+      publisher: "National Institute for Health Development (TAI)"
+      table_id: "SR55"
+      table_or_url: "https://statistika.tai.ee/pxweb/en/Andmebaas/Andmebaas__01Rahvastik__02Synnid/SR55.px/"
+      api_url: "https://statistika.tai.ee/api/v1/en/Andmebaas/01Rahvastik/02Synnid/SR55.px"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Place of residence = Estonia. Estonian 6851; Russian 1564;
+        other non-Estonian (Ukrainian 457 + Belarusian 24 + Finn 13 + Latvian 25
+        + other 456 = 975). Unknown (2) excluded. Known n = 9390.
+        Labels are neutral facts for weighting — never use to stereotype regions.
+
+# ---------------------------------------------------------------------------
+# BEATS
+# ---------------------------------------------------------------------------
+beats:
+  - id: birth
+    title: "Birth"
+    age: 0
+    required: true
+    template: >
+      Born in {region}, Estonia, into {class_level} family.
+      You were born a {sex}. Your mother was {parents_marital_status}.
+      Home was in {settlement}.
+    slots:
+      region: { variable: region, tag: fact }
+      class_level: { variable: class_level, tag: fact }
+      sex: { variable: sex, tag: fact }
+      parents_marital_status: { variable: parents_marital_status, tag: fact }
+      settlement: { variable: settlement, tag: fact }
+    notes: >
+      Uses mother's status language ("Your mother was…") because SR55 is about
+      women who gave birth, not a two-parent household survey.
+      mother_age_group / mother_born_in / mother_nationality are rolled for later
+      conditions but intentionally omitted from this template.
+
+  - id: early_childhood
+    title: "Early childhood"
+    age: { min: 2, max: 5 }
+    required: true
+    template: >
+      When you were {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: early_childhood_events
+        tag: mixed
+    notes: "One concrete happening. Prefer color until more childhood stats are wired."
+
+  - id: school_years
+    title: "School years"
+    age: { min: 7, max: 15 }
+    required: true
+    template: >
+      At {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: school_events
+        tag: mixed
+
+  - id: leaving_school
+    title: "Leaving school / next step"
+    age: { min: 16, max: 20 }
+    required: false
+    template: >
+      Around {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: leaving_school_events
+        tag: mixed
+
+  - id: early_work
+    title: "Early work"
+    age: { min: 18, max: 28 }
+    required: false
+    template: >
+      By {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: early_work_events
+        tag: mixed
+
+  - id: family_formation
+    title: "Family"
+    age: { min: 22, max: 38 }
+    required: false
+    template: >
+      At {age}, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: family_events
+        tag: mixed
+
+  - id: midlife
+    title: "Midlife"
+    age: { min: 40, max: 55 }
+    required: false
+    template: >
+      In your {age}s, {happening}
+    slots:
+      age: { from: beat_age, tag: fact }
+      happening:
+        pool: midlife_events
+        tag: mixed
+
+# ---------------------------------------------------------------------------
+# EVENT POOLS
+# Fact items cite sources. Color items are for the flair pass — replace freely.
+# ---------------------------------------------------------------------------
+pools:
+  early_childhood_events:
+    - id: stayed_near_birth_region
+      tag: fact
+      text: "you were still growing up in {region}."
+      weight: 1.0
+      notes: "Default continuity; not a migration statistic."
+      source:
+        publisher: "n/a"
+        table_or_url: "continuity assumption"
+        year: null
+    - id: clinic_checkups
+      tag: color
+      text: "family-doctor visits and kindergarten drop-offs already set the week's rhythm."
+      weight: 1.0
+    - id: sibling_arrives
+      tag: color
+      text: "a younger sibling arrived and the flat felt suddenly smaller."
+      weight: 1.0
+    - id: grandparent_care
+      tag: color
+      text: "grandparents covered long stretches of childcare while the adults worked."
+      weight: 1.0
+    - id: move_within_estonia
+      tag: color
+      text: "your family moved within Estonia and you had to learn a new courtyard from scratch."
+      weight: 0.8
+
+  school_events:
+    - id: local_basic_school
+      tag: color
+      text: "you were in basic school near home, measuring the year in bus stops and term tests."
+      weight: 1.2
+    - id: long_school_trip
+      tag: color
+      text: "the trip to school ate a chunk of every morning — rain, ice, or sun."
+      weight: 1.0
+      by_settlement:
+        rural: 1.4
+        urban: 0.8
+    - id: russian_estonian_mix
+      tag: color
+      text: "the stairwell mixed Estonian and Russian depending on who was shouting."
+      weight: 0.7
+      by_mother_nationality:
+        estonian: 0.6
+        russian: 1.8
+        other: 1.0
+      by_region:
+        # Mild color bias only — not a claim about language shares
+        ida_viru: 1.8
+        tallinn: 1.2
+      notes: "Color only. Do not treat as a language-statistics claim."
+    - id: academics_expected
+      tag: color
+      text: "adults talked about marks and 'what comes after school' as if the path were already drawn."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 0.5
+        upper_secondary: 1.0
+        tertiary: 1.6
+    - id: practical_track_talk
+      tag: color
+      text: "teachers mentioned vocational options more often than university brochures."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 1.6
+        upper_secondary: 1.1
+        tertiary: 0.4
+
+  leaving_school_events:
+    - id: finish_secondary
+      tag: color
+      text: "you finished secondary school and had to choose earning versus more study."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 0.6
+        upper_secondary: 1.3
+        tertiary: 1.0
+    - id: vocational_route
+      tag: color
+      text: "you took a vocational route — workshop hours, a practical certificate, a clearer job door."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 1.5
+        upper_secondary: 1.2
+        tertiary: 0.4
+    - id: university_track
+      tag: color
+      text: "university applications were the expected next step, not a surprise."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 0.3
+        upper_secondary: 0.8
+        tertiary: 1.8
+    - id: leave_early_for_work
+      tag: color
+      text: "paid work pulled harder than the timetable, and school slipped down the list."
+      weight: 0.8
+      by_class_level:
+        below_upper_secondary: 1.8
+        upper_secondary: 0.7
+        tertiary: 0.2
+
+  early_work_events:
+    - id: first_formal_job
+      tag: color
+      text: "you had a first formal job with a contract, a supervisor, and a pay day you could count on."
+      weight: 1.0
+    - id: shift_work
+      tag: color
+      text: "shifts ran long and the body learned the job before the CV did."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 1.5
+        upper_secondary: 1.1
+        tertiary: 0.5
+    - id: office_start
+      tag: color
+      text: "you started behind a desk where everyone seemed to have a degree and an opinion."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 0.3
+        upper_secondary: 0.8
+        tertiary: 1.7
+
+  family_events:
+    - id: partner_and_rent
+      tag: color
+      text: "you moved in with a partner and learned how quickly rent eats a month."
+      weight: 1.0
+    - id: first_child
+      tag: color
+      text: "the first child arrived before either of you felt fully ready on paper."
+      weight: 1.0
+    - id: dual_career_timing
+      tag: color
+      text: "you timed family around two careers that did not pause politely."
+      weight: 1.0
+      by_class_level:
+        below_upper_secondary: 0.4
+        upper_secondary: 0.9
+        tertiary: 1.6
+
+  midlife_events:
+    - id: ordinary_stability
+      tag: color
+      text: "life looked ordinary from the outside — work, home, the quiet math of staying afloat."
+      weight: 1.0
+    - id: health_words_lengthen
+      tag: color
+      text: "doctor visits started using longer words than they used to."
+      weight: 1.0
+    - id: kids_older
+      tag: color
+      text: "the children were old enough to ignore you and still young enough to need you."
+      weight: 1.0
+
+# ---------------------------------------------------------------------------
+# EXAMPLE ROLLS (plain / stats-honest; flair welcome in review)
+# ---------------------------------------------------------------------------
+example_rolls:
+  - title: "tallinn_tertiary_cohab"
+    rolls:
+      region: tallinn
+      sex: female
+      class_level: tertiary
+      parents_marital_status: cohabiting
+      settlement: urban
+      mother_age_group: age_30_34
+      mother_born_in: estonia
+      mother_nationality: estonian
+    output: >
+      Born in Tallinn, Estonia, into an upper-middle-class family. You were born a girl.
+      Your mother was living together unmarried. Home was in a city or town area.
+      When you were 3, family-doctor visits and kindergarten drop-offs already set the week's rhythm.
+      At 12, adults talked about marks and 'what comes after school' as if the path were already drawn.
+
+  - title: "ida_viru_working_married_boy"
+    rolls:
+      region: ida_viru
+      sex: male
+      class_level: below_upper_secondary
+      parents_marital_status: married
+      settlement: urban
+      mother_age_group: age_25_29
+      mother_born_in: estonia
+      mother_nationality: russian
+    output: >
+      Born in Ida-Viru county, Estonia, into a working-class family. You were born a boy.
+      Your mother was married. Home was in a city or town area.
+      When you were 4, grandparents covered long stretches of childcare while the adults worked.
+      At 14, teachers mentioned vocational options more often than university brochures.
+
+  - title: "viljandi_middle_rural"
+    rolls:
+      region: viljandi
+      sex: female
+      class_level: upper_secondary
+      parents_marital_status: married
+      settlement: rural
+      mother_age_group: age_30_34
+      mother_born_in: estonia
+      mother_nationality: estonian
+    output: >
+      Born in Viljandi county, Estonia, into a middle-class family. You were born a girl.
+      Your mother was married. Home was in a rural area.
+      When you were 5, your family moved within Estonia and you had to learn a new courtyard from scratch.
+      At 11, the trip to school ate a chunk of every morning — rain, ice, or sun.
+
+  - title: "tartu_tertiary_married"
+    rolls:
+      region: tartu
+      sex: male
+      class_level: tertiary
+      parents_marital_status: married
+      settlement: urban
+      mother_age_group: age_35_39
+      mother_born_in: estonia
+      mother_nationality: estonian
+    output: >
+      Born in Tartu county, Estonia, into an upper-middle-class family. You were born a boy.
+      Your mother was married. Home was in a city or town area.
+      When you were 2, you were still growing up in Tartu county.
+      At 15, adults talked about marks and 'what comes after school' as if the path were already drawn.
+
+  - title: "tallinn_foreign_born_mother"
+    rolls:
+      region: tallinn
+      sex: female
+      class_level: upper_secondary
+      parents_marital_status: cohabiting
+      settlement: urban
+      mother_age_group: age_25_29
+      mother_born_in: foreign_non_eu
+      mother_nationality: other
+    output: >
+      Born in Tallinn, Estonia, into a middle-class family. You were born a girl.
+      Your mother was living together unmarried. Home was in a city or town area.
+      When you were 3, a younger sibling arrived and the flat felt suddenly smaller.
+      At 10, you were in basic school near home, measuring the year in bus stops and term tests.
+
+# ---------------------------------------------------------------------------
+# LLM IMPLEMENTATION BRIEF
+# ---------------------------------------------------------------------------
+llm_brief:
+  goal: >
+    Implement a life-path generator for Estonia that rolls the fact variables
+    from this file, walks beats until age-at-death, and composes text from
+    templates + pools. Wire class_level to existing education strata in
+    data/countries/EST.json.
+  must:
+    - "Keep 2024 weights unless updating with a newer cited year"
+    - "Reuse vocab/pack stratum ids: below-upper-secondary, upper-secondary, tertiary"
+    - "Honor fact vs color tags"
+    - "Cite RV11U, RV106, RV142U, RV115, SR55 (and RV033 as cross-check) in country pack sources"
+    - "Preserve mother-based marital wording unless a better two-parent source is added"
+    - "Roll mother_age_group / mother_born_in / mother_nationality but keep them out of birth template by default"
+  must_not:
+    - "Replace county weights with vibes"
+    - "Hardcode only a few full stories per class"
+    - "Put nationality into the birth opener without an explicit design decision"
+  deliverables:
+    - "data/life-paths/EST.life-path.yaml (this file)"
+    - "Generator wiring + sample outputs in the PR"
+  verification_snapshot_2024:
+    live_births_total: 9690
+    tallinn_births: 3262
+    harju_county_births: 4793
+    harju_excl_tallinn_births: 1531
+    boys: 4933
+    girls: 4757
+    mother_edu_known_total: 9684
+    mother_edu_below_upper_secondary: 1185
+    mother_edu_upper_secondary: 3432
+    mother_edu_tertiary: 5067
+    mothers_all_estonia_residence: 9392
+    mothers_known_marital: 9354
+    mothers_married: 4375
+    mothers_cohabiting: 4708
+    mothers_single: 228
+    mothers_divorced: 41
+    mothers_widowed: 2
+    mothers_marital_unknown: 38
+    marital_births_pct_rv033: 46.64
+    mean_mother_age_rv033: 31.06
+    urban_births: 6880
+    rural_births: 2810
+    mother_age_under_20: 133
+    mother_age_20_24: 978
+    mother_age_25_29: 2345
+    mother_age_30_34: 3260
+    mother_age_35_39: 2276
+    mother_age_40_plus: 698
+    mother_born_estonia: 8429
+    mother_born_foreign: 1261
+    mother_nationality_estonian: 6851
+    mother_nationality_russian: 1564
+    mother_nationality_other_non_estonian: 975
+  verified_via:
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV11U (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV106 (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV142U (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV115 (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV033 (2024)"
+    - "POST https://statistika.tai.ee/api/v1/en/Andmebaas/01Rahvastik/02Synnid/SR55.px (2024, Elukoht=Estonia)"

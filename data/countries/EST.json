@@ -53,8 +53,44 @@
       "metric": "Infant deaths by cause",
       "year": "2022-2025",
       "url": "https://statistika.tai.ee/"
+    },
+    {
+      "id": "RV11U",
+      "publisher": "Statistics Estonia",
+      "metric": "Live births by county (life-path region)",
+      "year": 2024,
+      "url": "https://andmed.stat.ee/en/stat/RV11U"
+    },
+    {
+      "id": "RV106",
+      "publisher": "Statistics Estonia",
+      "metric": "Live births by sex",
+      "year": 2024,
+      "url": "https://andmed.stat.ee/en/stat/RV106"
+    },
+    {
+      "id": "RV142U",
+      "publisher": "Statistics Estonia",
+      "metric": "Live births by mother's education and settlement",
+      "year": 2024,
+      "url": "https://andmed.stat.ee/en/stat/RV142U"
+    },
+    {
+      "id": "RV115",
+      "publisher": "Statistics Estonia",
+      "metric": "Live births by mother's country of birth",
+      "year": 2024,
+      "url": "https://andmed.stat.ee/en/stat/RV115"
+    },
+    {
+      "id": "SR55",
+      "publisher": "TAI",
+      "metric": "Women given birth by marital status and nationality",
+      "year": 2024,
+      "url": "https://statistika.tai.ee/pxweb/en/Andmebaas/Andmebaas__01Rahvastik__02Synnid/SR55.px/"
     }
   ],
+  "lifePathSpec": "life-paths/EST.life-path.json",
   "populationMillions": 1.37,
   "incomeBand": "high",
   "strata": {

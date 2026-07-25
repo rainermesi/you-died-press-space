@@ -13,6 +13,7 @@ This folder is the contribution surface for real-world rebirth models.
 | `fallback.json` | Illustrative model when a country has no pack |
 | `countries/XXX.json` | One curated pack per ISO3 code |
 | `life-paths/TEMPLATE.life-path.yaml` | Fillable life-story spec (beats, distributions, pools) |
+| `life-paths/XX.life-path.json` | Compiled runtime life-path (from YAML via `scripts/compile-life-path.py`) |
 
 **Rule of thumb**
 
@@ -62,7 +63,8 @@ This folder is the contribution surface for real-world rebirth models.
       "injuryDetail": [{ "id": "accident", "weight": 54.65 }]
     }
   ],
-  "lifePath": "deprecated — prefer storyBank",
+  "lifePath": "deprecated — prefer lifePathSpec, then storyBank",
+  "lifePathSpec": "life-paths/EST.life-path.json",
   "storyBank": {
     "schemaVersion": 1,
     "pools": {
