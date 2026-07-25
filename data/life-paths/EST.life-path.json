@@ -6,7 +6,7 @@
     "language": "en",
     "updated": "2026-07-25",
     "author": "cursor-agent (stats draft for human flair pass)",
-    "notes": "Birth-weighted distributions from Statistics Estonia and TAI. Socioeconomic start uses mother's educational level at birth (RV142U), which is the right prior for a newborn — not the adult population education mix. Tallinn is split out of Harju county using RV11U sub-row 784. Mother nationality and country-of-birth are available as fact variables but are NOT in the default birth template (avoid essentializing ethnicity in the opener). Later-life event pools are mostly color stubs for the flair pass; birth variables are fact-backed and should stay stable.\n"
+    "notes": "Birth-weighted distributions from Statistics Estonia and TAI. Home place is sampled from curated town/district banks keyed by county + urban/rural. Childhood GP-visit beats cite probable causes (otitis, caries, ARI). School-mark patterns use Estonia's 5-point scale with PISA-informed SES bias. Later-life pools remain mostly color stubs for the flair pass."
   },
   "voice": {
     "person": "second",
@@ -348,6 +348,69 @@
         "confidence": "exact",
         "notes": "Place of residence = Estonia. Estonian 6851; Russian 1564; other non-Estonian (Ukrainian 457 + Belarusian 24 + Finn 13 + Latvian 25 + other 456 = 975). Unknown (2) excluded. Known n = 9390. Labels are neutral facts for weighting — never use to stereotype regions.\n"
       }
+    },
+    "school_marks": {
+      "description": "Typical report-card pattern on Estonia's 5-point scale (5 very good … 1 poor). Biased by class_level using PISA SES gap directionally.",
+      "values": [
+        {
+          "id": "mostly_fives",
+          "label": "mostly fives",
+          "weight": 0.1,
+          "by_class_level": {
+            "below_upper_secondary": 0.4,
+            "upper_secondary": 0.8,
+            "tertiary": 1.6
+          }
+        },
+        {
+          "id": "fours_and_fives",
+          "label": "mostly fours and fives",
+          "weight": 0.32,
+          "by_class_level": {
+            "below_upper_secondary": 0.6,
+            "upper_secondary": 1.0,
+            "tertiary": 1.4
+          }
+        },
+        {
+          "id": "mostly_threes",
+          "label": "mostly threes",
+          "weight": 0.4,
+          "by_class_level": {
+            "below_upper_secondary": 1.2,
+            "upper_secondary": 1.0,
+            "tertiary": 0.8
+          }
+        },
+        {
+          "id": "threes_and_twos",
+          "label": "threes with some twos",
+          "weight": 0.15,
+          "by_class_level": {
+            "below_upper_secondary": 1.8,
+            "upper_secondary": 1.0,
+            "tertiary": 0.4
+          }
+        },
+        {
+          "id": "struggling",
+          "label": "marks drifting toward twos and ones",
+          "weight": 0.03,
+          "by_class_level": {
+            "below_upper_secondary": 2.2,
+            "upper_secondary": 1.0,
+            "tertiary": 0.3
+          }
+        }
+      ],
+      "source": {
+        "publisher": "Harno / OECD PISA",
+        "table_or_url": "https://www.harno.ee/media/5597/download",
+        "secondary_url": "https://www.oecd.org/publication/pisa-2022-results/webbooks/dynamic/pisa-country-notes/dafed886/pdf/estonia.pdf",
+        "year": 2022,
+        "confidence": "approximate",
+        "notes": "Scale (exact): Estonian 5-point grades — 5 väga hea (90–100%), 4 hea (75–89%), 3 rahuldav (50–74%), 2 puudulik, 1 nõrk (Harno secondary-education factsheet; same scale used in basic school). Share of each report-card pattern is approximate (no national GPA census). Class bias is directional from PISA 2022 EE: advantaged vs disadvantaged maths gap 81 points; SES explains ~13% of maths variance (OECD country note)."
+      }
     }
   },
   "beats": [
@@ -356,7 +419,7 @@
       "title": "Birth",
       "age": 0,
       "required": true,
-      "template": "Born in {region}, Estonia, into {class_level} family. You were born a {sex}. Your mother was {parents_marital_status}. Home was in {settlement}.\n",
+      "template": "Born in {region}, Estonia, into {class_level} family. You were born a {sex}. Your mother was {parents_marital_status}. Home was in {place}.",
       "slots": {
         "region": {
           "variable": "region",
@@ -374,12 +437,12 @@
           "variable": "parents_marital_status",
           "tag": "fact"
         },
-        "settlement": {
-          "variable": "settlement",
+        "place": {
+          "from": "place_bank",
           "tag": "fact"
         }
       },
-      "notes": "Uses mother's status language (\"Your mother was…\") because SR55 is about women who gave birth, not a two-parent household survey. mother_age_group / mother_born_in / mother_nationality are rolled for later conditions but intentionally omitted from this template.\n"
+      "notes": "Place is sampled from place_banks[region][settlement]. Settlement stays as an internal fact variable for later biases."
     },
     {
       "id": "early_childhood",
@@ -506,11 +569,11 @@
   "pools": {
     "early_childhood_events": [
       {
-        "id": "stayed_near_birth_region",
+        "id": "stayed_near_birth_place",
         "tag": "fact",
-        "text": "you were still growing up in {region}.",
+        "text": "you were still growing up in {place}.",
         "weight": 1.0,
-        "notes": "Default continuity; not a migration statistic.",
+        "notes": "Continuity assumption; not a migration statistic.",
         "source": {
           "publisher": "n/a",
           "table_or_url": "continuity assumption",
@@ -518,41 +581,81 @@
         }
       },
       {
-        "id": "clinic_checkups",
-        "tag": "color",
-        "text": "family-doctor visits and kindergarten drop-offs already set the week's rhythm.",
-        "weight": 1.0
+        "id": "ear_infection",
+        "tag": "fact",
+        "text": "a middle-ear infection kept sending you back to the family doctor between kindergarten mornings.",
+        "weight": 1.3,
+        "source": {
+          "publisher": "Global Burden of Disease / pediatric literature",
+          "table_or_url": "https://link.springer.com/article/10.1007/s00405-024-09165-z",
+          "year": 2021,
+          "confidence": "approximate",
+          "notes": "Otitis media is among the most common childhood illnesses worldwide and a leading reason for pediatric primary-care visits; used here as a high-prior childhood GP visit cause. Estonia-specific AOM incidence is not published as a clean national rate — confidence approximate."
+        }
+      },
+      {
+        "id": "dental_caries",
+        "tag": "fact",
+        "text": "the dentist found cavities — common in Estonian preschoolers — so family-doctor week suddenly included dental visits too.",
+        "weight": 1.1,
+        "source": {
+          "publisher": "International Journal of Paediatric Dentistry",
+          "table_or_url": "https://doi.org/10.1111/j.1365-263x.2006.00788.x",
+          "year": 2007,
+          "confidence": "approximate",
+          "notes": "Study of Estonian 2–4-year-olds: caries in ~42% (dmft mean 1.6). Older study; still a documented EE childhood burden."
+        }
+      },
+      {
+        "id": "winter_respiratory",
+        "tag": "fact",
+        "text": "a winter cough and runny nose that would not clear meant repeat family-doctor visits while kindergarten still expected you each morning.",
+        "weight": 1.4,
+        "source": {
+          "publisher": "Terviseamet (Health Board)",
+          "table_or_url": "https://www.terviseamet.ee/sites/default/files/documents/2024-07/nakkushaiguste_esinemine_eestis_18_2023.pdf",
+          "year": 2022,
+          "confidence": "approximate",
+          "notes": "Acute respiratory infections are routinely the largest block of communicable-disease surveillance in Estonia and heavily affect preschool cohorts; exact visit rates vary by season/year."
+        }
       },
       {
         "id": "sibling_arrives",
         "tag": "color",
-        "text": "a younger sibling arrived and the flat felt suddenly smaller.",
+        "text": "a younger sibling arrived and the flat in {place} felt suddenly smaller.",
         "weight": 1.0
       },
       {
         "id": "grandparent_care",
         "tag": "color",
-        "text": "grandparents covered long stretches of childcare while the adults worked.",
+        "text": "grandparents covered long stretches of childcare in {place} while the adults worked.",
         "weight": 1.0
       },
       {
         "id": "move_within_estonia",
         "tag": "color",
-        "text": "your family moved within Estonia and you had to learn a new courtyard from scratch.",
-        "weight": 0.8
+        "text": "your family moved from {place} to {place_to}, and you had to say goodbye to your old friends.",
+        "weight": 0.9,
+        "extra_slots": {
+          "place_to": {
+            "from": "place_bank",
+            "different_region": true,
+            "tag": "color"
+          }
+        }
       }
     ],
     "school_events": [
       {
         "id": "local_basic_school",
         "tag": "color",
-        "text": "you were in basic school near home, measuring the year in bus stops and term tests.",
+        "text": "you were in basic school near {place}, measuring the year in bus stops and term tests.",
         "weight": 1.2
       },
       {
         "id": "long_school_trip",
         "tag": "color",
-        "text": "the trip to school ate a chunk of every morning — rain, ice, or sun.",
+        "text": "the trip from {place} to school ate a chunk of every morning — rain, ice, or sun.",
         "weight": 1.0,
         "by_settlement": {
           "rural": 1.4,
@@ -562,7 +665,7 @@
       {
         "id": "russian_estonian_mix",
         "tag": "color",
-        "text": "the stairwell mixed Estonian and Russian depending on who was shouting.",
+        "text": "around {place}, the stairwell mixed Estonian and Russian depending on who was shouting.",
         "weight": 0.7,
         "by_mother_nationality": {
           "estonian": 0.6,
@@ -576,20 +679,27 @@
         "notes": "Color only. Do not treat as a language-statistics claim."
       },
       {
-        "id": "academics_expected",
-        "tag": "color",
-        "text": "adults talked about marks and 'what comes after school' as if the path were already drawn.",
-        "weight": 1.0,
+        "id": "marks_path_talk",
+        "tag": "fact",
+        "text": "your report card showed {school_marks}, and adults talked about what comes after school as if the path were already drawn.",
+        "weight": 1.2,
+        "source": {
+          "publisher": "Harno / OECD PISA",
+          "table_or_url": "https://www.harno.ee/media/5597/download",
+          "year": 2022,
+          "confidence": "approximate",
+          "notes": "Uses rolled school_marks (5-point scale + PISA SES-biased weights)."
+        },
         "by_class_level": {
-          "below_upper_secondary": 0.5,
+          "below_upper_secondary": 0.7,
           "upper_secondary": 1.0,
-          "tertiary": 1.6
+          "tertiary": 1.3
         }
       },
       {
         "id": "practical_track_talk",
         "tag": "color",
-        "text": "teachers mentioned vocational options more often than university brochures.",
+        "text": "with {school_marks} on the report card, teachers mentioned vocational options more often than university brochures.",
         "weight": 1.0,
         "by_class_level": {
           "below_upper_secondary": 1.6,
@@ -729,11 +839,10 @@
         "class_level": "tertiary",
         "parents_marital_status": "cohabiting",
         "settlement": "urban",
-        "mother_age_group": "age_30_34",
-        "mother_born_in": "estonia",
-        "mother_nationality": "estonian"
+        "place": "Kadriorg in Tallinn",
+        "school_marks": "fours_and_fives"
       },
-      "output": "Born in Tallinn, Estonia, into an upper-middle-class family. You were born a girl. Your mother was living together unmarried. Home was in a city or town area. When you were 3, family-doctor visits and kindergarten drop-offs already set the week's rhythm. At 12, adults talked about marks and 'what comes after school' as if the path were already drawn.\n"
+      "output": "Born in Tallinn, Estonia, into an upper-middle-class family. You were born a girl. Your mother was living together unmarried. Home was in Kadriorg in Tallinn. When you were 3, a middle-ear infection kept sending you back to the family doctor between kindergarten mornings. At 12, your report card showed mostly fours and fives, and adults talked about what comes after school as if the path were already drawn."
     },
     {
       "title": "ida_viru_working_married_boy",
@@ -743,53 +852,22 @@
         "class_level": "below_upper_secondary",
         "parents_marital_status": "married",
         "settlement": "urban",
-        "mother_age_group": "age_25_29",
-        "mother_born_in": "estonia",
-        "mother_nationality": "russian"
+        "place": "Narva",
+        "school_marks": "threes_and_twos"
       },
-      "output": "Born in Ida-Viru county, Estonia, into a working-class family. You were born a boy. Your mother was married. Home was in a city or town area. When you were 4, grandparents covered long stretches of childcare while the adults worked. At 14, teachers mentioned vocational options more often than university brochures.\n"
+      "output": "Born in Ida-Viru county, Estonia, into a working-class family. You were born a boy. Your mother was married. Home was in Narva. When you were 4, grandparents covered long stretches of childcare in Narva while the adults worked. At 14, with threes with some twos on the report card, teachers mentioned vocational options more often than university brochures."
     },
     {
-      "title": "viljandi_middle_rural",
+      "title": "viljandi_middle_rural_move",
       "rolls": {
         "region": "viljandi",
         "sex": "female",
         "class_level": "upper_secondary",
         "parents_marital_status": "married",
         "settlement": "rural",
-        "mother_age_group": "age_30_34",
-        "mother_born_in": "estonia",
-        "mother_nationality": "estonian"
+        "place": "Suure-Jaani"
       },
-      "output": "Born in Viljandi county, Estonia, into a middle-class family. You were born a girl. Your mother was married. Home was in a rural area. When you were 5, your family moved within Estonia and you had to learn a new courtyard from scratch. At 11, the trip to school ate a chunk of every morning — rain, ice, or sun.\n"
-    },
-    {
-      "title": "tartu_tertiary_married",
-      "rolls": {
-        "region": "tartu",
-        "sex": "male",
-        "class_level": "tertiary",
-        "parents_marital_status": "married",
-        "settlement": "urban",
-        "mother_age_group": "age_35_39",
-        "mother_born_in": "estonia",
-        "mother_nationality": "estonian"
-      },
-      "output": "Born in Tartu county, Estonia, into an upper-middle-class family. You were born a boy. Your mother was married. Home was in a city or town area. When you were 2, you were still growing up in Tartu county. At 15, adults talked about marks and 'what comes after school' as if the path were already drawn.\n"
-    },
-    {
-      "title": "tallinn_foreign_born_mother",
-      "rolls": {
-        "region": "tallinn",
-        "sex": "female",
-        "class_level": "upper_secondary",
-        "parents_marital_status": "cohabiting",
-        "settlement": "urban",
-        "mother_age_group": "age_25_29",
-        "mother_born_in": "foreign_non_eu",
-        "mother_nationality": "other"
-      },
-      "output": "Born in Tallinn, Estonia, into a middle-class family. You were born a girl. Your mother was living together unmarried. Home was in a city or town area. When you were 3, a younger sibling arrived and the flat felt suddenly smaller. At 10, you were in basic school near home, measuring the year in bus stops and term tests.\n"
+      "output": "Born in Viljandi county, Estonia, into a middle-class family. You were born a girl. Your mother was married. Home was in Suure-Jaani. When you were 5, your family moved from Suure-Jaani to Annelinn in Tartu, and you had to say goodbye to your old friends. At 11, the trip from Annelinn in Tartu to school ate a chunk of every morning — rain, ice, or sun."
     }
   ],
   "llm_brief": {
@@ -854,5 +932,643 @@
       "POST https://andmed.stat.ee/api/v1/en/stat/RV033 (2024)",
       "POST https://statistika.tai.ee/api/v1/en/Andmebaas/01Rahvastik/02Synnid/SR55.px (2024, Elukoht=Estonia)"
     ]
+  },
+  "place_banks": {
+    "tallinn": {
+      "urban": [
+        {
+          "id": "p0_lasnamae_in_tallinn",
+          "label": "Lasnamäe in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_mustamae_in_tallinn",
+          "label": "Mustamäe in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_oismae_in_tallinn",
+          "label": "Õismäe in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_kristiine_in_tallinn",
+          "label": "Kristiine in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p4_kadriorg_in_tallinn",
+          "label": "Kadriorg in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p5_pohja-tallinn",
+          "label": "Põhja-Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p6_nomme_in_tallinn",
+          "label": "Nõmme in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p7_kalamaja_in_tallinn",
+          "label": "Kalamaja in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p8_pelgulinn_in_tallinn",
+          "label": "Pelgulinn in Tallinn",
+          "weight": 1.0
+        },
+        {
+          "id": "p9_haabersti_in_tallinn",
+          "label": "Haabersti in Tallinn",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_the_edge_of_tallinn_toward_viimsi",
+          "label": "the edge of Tallinn toward Viimsi",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_the_edge_of_tallinn_toward_harku",
+          "label": "the edge of Tallinn toward Harku",
+          "weight": 1.0
+        }
+      ]
+    },
+    "harju_excl_tallinn": {
+      "urban": [
+        {
+          "id": "p0_maardu",
+          "label": "Maardu",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_keila",
+          "label": "Keila",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_saue",
+          "label": "Saue",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_paldiski",
+          "label": "Paldiski",
+          "weight": 1.0
+        },
+        {
+          "id": "p4_saue_parish_centre",
+          "label": "Saue parish centre",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_viimsi",
+          "label": "Viimsi",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_tabasalu",
+          "label": "Tabasalu",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_saku",
+          "label": "Saku",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_kiili",
+          "label": "Kiili",
+          "weight": 1.0
+        },
+        {
+          "id": "p4_raasiku",
+          "label": "Raasiku",
+          "weight": 1.0
+        },
+        {
+          "id": "p5_kuusalu",
+          "label": "Kuusalu",
+          "weight": 1.0
+        }
+      ]
+    },
+    "tartu": {
+      "urban": [
+        {
+          "id": "p0_annelinn_in_tartu",
+          "label": "Annelinn in Tartu",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_karlova_in_tartu",
+          "label": "Karlova in Tartu",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_supilinn_in_tartu",
+          "label": "Supilinn in Tartu",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_tammelinn_in_tartu",
+          "label": "Tammelinn in Tartu",
+          "weight": 1.0
+        },
+        {
+          "id": "p4_ulejoe_in_tartu",
+          "label": "Ülejõe in Tartu",
+          "weight": 1.0
+        },
+        {
+          "id": "p5_central_tartu",
+          "label": "central Tartu",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_ulenurme",
+          "label": "Ülenurme",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_noo",
+          "label": "Nõo",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_elva",
+          "label": "Elva",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_kambja",
+          "label": "Kambja",
+          "weight": 1.0
+        },
+        {
+          "id": "p4_alatskivi",
+          "label": "Alatskivi",
+          "weight": 1.0
+        }
+      ]
+    },
+    "ida_viru": {
+      "urban": [
+        {
+          "id": "p0_narva",
+          "label": "Narva",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_kohtla-jarve",
+          "label": "Kohtla-Järve",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_johvi",
+          "label": "Jõhvi",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_sillamae",
+          "label": "Sillamäe",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_toila",
+          "label": "Toila",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_aseri",
+          "label": "Aseri",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_luganuse",
+          "label": "Lüganuse",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_iisaku",
+          "label": "Iisaku",
+          "weight": 1.0
+        }
+      ]
+    },
+    "parnu": {
+      "urban": [
+        {
+          "id": "p0_central_parnu",
+          "label": "central Pärnu",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_raama_in_parnu",
+          "label": "Rääma in Pärnu",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_raekula_in_parnu",
+          "label": "Raeküla in Pärnu",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_audru",
+          "label": "Audru",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_vandra",
+          "label": "Vändra",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_tostamaa",
+          "label": "Tõstamaa",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_haademeeste",
+          "label": "Häädemeeste",
+          "weight": 1.0
+        }
+      ]
+    },
+    "laane_viru": {
+      "urban": [
+        {
+          "id": "p0_rakvere",
+          "label": "Rakvere",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_tapa",
+          "label": "Tapa",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_kunda",
+          "label": "Kunda",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_vinni",
+          "label": "Vinni",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_haljala",
+          "label": "Haljala",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_vaike-maarja",
+          "label": "Väike-Maarja",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_kadrina",
+          "label": "Kadrina",
+          "weight": 1.0
+        }
+      ]
+    },
+    "viljandi": {
+      "urban": [
+        {
+          "id": "p0_viljandi",
+          "label": "Viljandi",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_vohma",
+          "label": "Võhma",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_suure-jaani",
+          "label": "Suure-Jaani",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_abja-paluoja",
+          "label": "Abja-Paluoja",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_karksi-nuia",
+          "label": "Karksi-Nuia",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_kolga-jaani",
+          "label": "Kolga-Jaani",
+          "weight": 1.0
+        }
+      ]
+    },
+    "rapla": {
+      "urban": [
+        {
+          "id": "p0_rapla",
+          "label": "Rapla",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_kohila",
+          "label": "Kohila",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_marjamaa",
+          "label": "Märjamaa",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_juuru",
+          "label": "Juuru",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_kehtna",
+          "label": "Kehtna",
+          "weight": 1.0
+        }
+      ]
+    },
+    "voru": {
+      "urban": [
+        {
+          "id": "p0_voru",
+          "label": "Võru",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_antsla",
+          "label": "Antsla",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_rouge",
+          "label": "Rõuge",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_vastseliina",
+          "label": "Vastseliina",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_haanja",
+          "label": "Haanja",
+          "weight": 1.0
+        }
+      ]
+    },
+    "saare": {
+      "urban": [
+        {
+          "id": "p0_kuressaare",
+          "label": "Kuressaare",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_orissaare",
+          "label": "Orissaare",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_salme",
+          "label": "Salme",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_leisi",
+          "label": "Leisi",
+          "weight": 1.0
+        },
+        {
+          "id": "p3_mustjala",
+          "label": "Mustjala",
+          "weight": 1.0
+        }
+      ]
+    },
+    "jogev": {
+      "urban": [
+        {
+          "id": "p0_jogeva",
+          "label": "Jõgeva",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_poltsamaa",
+          "label": "Põltsamaa",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_mustvee",
+          "label": "Mustvee",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_tabivere",
+          "label": "Tabivere",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_pala",
+          "label": "Pala",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_torma",
+          "label": "Torma",
+          "weight": 1.0
+        }
+      ]
+    },
+    "jarva": {
+      "urban": [
+        {
+          "id": "p0_paide",
+          "label": "Paide",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_turi",
+          "label": "Türi",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_jarva-jaani",
+          "label": "Järva-Jaani",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_ambla",
+          "label": "Ambla",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_koeru",
+          "label": "Koeru",
+          "weight": 1.0
+        }
+      ]
+    },
+    "valga": {
+      "urban": [
+        {
+          "id": "p0_valga",
+          "label": "Valga",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_otepaa",
+          "label": "Otepää",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_torva",
+          "label": "Tõrva",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_helme",
+          "label": "Helme",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_puka",
+          "label": "Puka",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_sangaste",
+          "label": "Sangaste",
+          "weight": 1.0
+        }
+      ]
+    },
+    "polva": {
+      "urban": [
+        {
+          "id": "p0_polva",
+          "label": "Põlva",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_rapina",
+          "label": "Räpina",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_kanepi",
+          "label": "Kanepi",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_ahja",
+          "label": "Ahja",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_varska",
+          "label": "Värska",
+          "weight": 1.0
+        }
+      ]
+    },
+    "laane": {
+      "urban": [
+        {
+          "id": "p0_haapsalu",
+          "label": "Haapsalu",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_lihula",
+          "label": "Lihula",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_ridala",
+          "label": "Ridala",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_martna",
+          "label": "Martna",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_nova",
+          "label": "Nõva",
+          "weight": 1.0
+        }
+      ]
+    },
+    "hiiu": {
+      "urban": [
+        {
+          "id": "p0_kardla",
+          "label": "Kärdla",
+          "weight": 1.0
+        }
+      ],
+      "rural": [
+        {
+          "id": "p0_kaina",
+          "label": "Käina",
+          "weight": 1.0
+        },
+        {
+          "id": "p1_emmaste",
+          "label": "Emmaste",
+          "weight": 1.0
+        },
+        {
+          "id": "p2_korgessaare",
+          "label": "Kõrgessaare",
+          "weight": 1.0
+        }
+      ]
+    }
   }
 }
