@@ -116,24 +116,111 @@
     );
   }
 
+  function applyValueBiases(value, varIds) {
+    let w = value.weight == null || value.weight === "" ? 1 : Number(value.weight);
+    const biasMaps = [
+      ["by_class_level", "class_level"],
+      ["by_settlement", "settlement"],
+      ["by_region", "region"],
+      ["by_mother_nationality", "mother_nationality"],
+      ["by_sex", "sex"],
+    ];
+    for (const [mapKey, varName] of biasMaps) {
+      const table = value[mapKey];
+      if (!table || typeof table !== "object") continue;
+      const key = varIds[varName];
+      if (key != null && table[key] != null) w *= Number(table[key]);
+    }
+    return w > 0 ? w : 0;
+  }
+
+  function pickFromPlaceBank(spec, regionId, settlementId) {
+    const banks = spec.place_banks || {};
+    const regionBank = banks[regionId] || {};
+    const list =
+      regionBank[settlementId] ||
+      regionBank.urban ||
+      regionBank.rural ||
+      [];
+    if (!list.length) {
+      const regionVar = spec.variables?.region?.values?.find((v) => v.id === regionId);
+      return {
+        id: regionId || "unknown",
+        label: regionVar?.label || regionId || "Estonia",
+      };
+    }
+    return pickWeightedValues(
+      list.map((p) => ({
+        ...p,
+        weight: p.weight == null ? 1 : Number(p.weight),
+      }))
+    );
+  }
+
+  function rollPlaceForVars(spec, ids, labels) {
+    const place = pickFromPlaceBank(spec, ids.region, ids.settlement || "urban");
+    ids.place = place.id;
+    labels.place = place.label;
+    ids.place_region = ids.region;
+  }
+
+  function rollOtherPlace(spec, ids) {
+    const regions = Object.keys(spec.place_banks || {});
+    let candidates = regions.filter((r) => r !== ids.place_region && r !== ids.region);
+    if (!candidates.length) candidates = regions.filter((r) => r !== ids.region);
+    if (!candidates.length) candidates = regions.slice();
+    const destRegion =
+      candidates[Math.floor(Math.random() * candidates.length)] || ids.region;
+    // Prefer urban destinations slightly (internal migration toward towns)
+    const settlement = Math.random() < 0.75 ? "urban" : "rural";
+    const place = pickFromPlaceBank(spec, destRegion, settlement);
+    return {
+      id: place.id,
+      label: place.label,
+      region: destRegion,
+      settlement,
+    };
+  }
+
   function rollLifePathVariables(spec) {
     const rolled = Object.create(null);
     const labels = Object.create(null);
-    for (const [name, def] of Object.entries(spec.variables || {})) {
-      const values = def.values || [];
-      if (!values.length) continue;
-      // Weights may be null → equal weight (or skip nulls later). Engine normalizes.
-      const pickable = values.map((v) => ({
-        ...v,
-        weight: v.weight == null || v.weight === "" ? 1 : Number(v.weight),
-      }));
+    // Roll core facts first so dependent vars can bias
+    const order = [
+      "region",
+      "sex",
+      "class_level",
+      "parents_marital_status",
+      "settlement",
+      "mother_age_group",
+      "mother_born_in",
+      "mother_nationality",
+      "school_marks",
+    ];
+    const seen = new Set();
+    const rollOne = (name) => {
+      if (seen.has(name)) return;
+      const def = spec.variables?.[name];
+      if (!def?.values?.length) return;
+      seen.add(name);
+      const pickable = def.values
+        .map((v) => ({
+          ...v,
+          weight: applyValueBiases(v, rolled),
+        }))
+        .filter((v) => v.weight > 0);
+      if (!pickable.length) return;
       const chosen = pickWeightedValues(pickable);
       rolled[name] = chosen.id;
       labels[name] = chosen.label;
       if (name === "class_level" && chosen.pack_stratum_id) {
         rolled.pack_stratum_id = chosen.pack_stratum_id;
       }
-    }
+    };
+    for (const name of order) rollOne(name);
+    for (const name of Object.keys(spec.variables || {})) rollOne(name);
+
+    rollPlaceForVars(spec, rolled, labels);
     return { ids: rolled, labels };
   }
 
@@ -150,24 +237,10 @@
   }
 
   function poolItemWeight(item, varIds) {
-    let w = item.weight == null ? 1 : Number(item.weight);
-    if (!(w > 0)) return 0;
-    const biasMaps = [
-      ["by_class_level", "class_level"],
-      ["by_settlement", "settlement"],
-      ["by_region", "region"],
-      ["by_mother_nationality", "mother_nationality"],
-      ["by_sex", "sex"],
-      ["by_mother_born_in", "mother_born_in"],
-      ["by_mother_age_group", "mother_age_group"],
-    ];
-    for (const [mapKey, varName] of biasMaps) {
-      const table = item[mapKey];
-      if (!table || typeof table !== "object") continue;
-      const key = varIds[varName];
-      if (key != null && table[key] != null) w *= Number(table[key]);
-    }
-    return w > 0 ? w : 0;
+    return applyValueBiases(
+      { ...item, weight: item.weight == null ? 1 : Number(item.weight) },
+      varIds
+    );
   }
 
   function pickPoolEvent(poolItems, varIds) {
@@ -189,6 +262,39 @@
       return cur == null ? "" : String(cur);
     }
     if (slotDef.from === "beat_age") return String(ctx.beatAge);
+    if (slotDef.from === "place_bank") {
+      if (slotDef.different_region) {
+        const dest = rollOtherPlace(ctx.spec, ctx.ids);
+        // Persist destination so later beats can use the new home
+        ctx.ids.place_to = dest.id;
+        ctx.labels.place_to = dest.label;
+        ctx.ids.place = dest.id;
+        ctx.labels.place = dest.label;
+        ctx.ids.place_region = dest.region;
+        ctx.ids.region = dest.region;
+        ctx.labels.region =
+          ctx.spec.variables?.region?.values?.find((v) => v.id === dest.region)
+            ?.label || dest.region;
+        if (dest.settlement) {
+          ctx.ids.settlement = dest.settlement;
+          ctx.labels.settlement =
+            ctx.spec.variables?.settlement?.values?.find(
+              (v) => v.id === dest.settlement
+            )?.label || dest.settlement;
+        }
+        return dest.label;
+      }
+      // Default: current home place
+      if (ctx.labels.place) return ctx.labels.place;
+      const place = pickFromPlaceBank(
+        ctx.spec,
+        ctx.ids.region,
+        ctx.ids.settlement || "urban"
+      );
+      ctx.ids.place = place.id;
+      ctx.labels.place = place.label;
+      return place.label;
+    }
     if (slotDef.variable) {
       return ctx.labels[slotDef.variable] || ctx.ids[slotDef.variable] || "";
     }
@@ -197,10 +303,8 @@
       const event = pickPoolEvent(items, ctx.ids);
       if (!event) return "";
       ctx.lastPoolEvent = event;
-      let text = event.text || "";
-      // Fill tokens from extra_slots, then shared variables
-      text = fillLifePathTemplate(text, event.extra_slots || {}, ctx, true);
-      return text;
+      // Fill left-to-right so {place} (origin) resolves before {place_to} overwrites home
+      return fillLifePathTemplate(event.text || "", event.extra_slots || {}, ctx, true);
     }
     return "";
   }
@@ -230,20 +334,39 @@
 
   function composeLifePathFromSpec(outcome, spec) {
     const vars = outcome.lifePathVars || rollLifePathVariables(spec);
+    // Clone so move events can mutate place without corrupting the roll snapshot
+    const ids = { ...vars.ids };
+    const labels = { ...vars.labels };
     const ctx = {
       spec,
-      ids: vars.ids,
-      labels: vars.labels,
+      ids,
+      labels,
       beatAge: 0,
       lastPoolEvent: null,
     };
 
     const stages = [];
+    let prevAge = -1;
     for (const beat of spec.beats || []) {
-      const age = sampleBeatAge(beat.age, beat.id);
+      let age;
+      if (beat.age != null && typeof beat.age === "object") {
+        const rangeMin = Number(beat.age.min);
+        const rangeMax = Number(beat.age.max);
+        const min = Math.max(rangeMin, prevAge + 1);
+        if (!Number.isFinite(min) || !Number.isFinite(rangeMax) || min > rangeMax) {
+          continue;
+        }
+        age = min + Math.floor(Math.random() * (rangeMax - min + 1));
+        if (beat.id === "midlife") age = Math.floor(age / 10) * 10;
+        // Decade flooring can collapse below prevAge — bump if needed
+        if (age <= prevAge) age = Math.min(rangeMax, prevAge + 1);
+      } else {
+        age = sampleBeatAge(beat.age, beat.id);
+        if (beat.id !== "birth" && age <= prevAge) age = prevAge + 1;
+      }
+
       // Truncate: keep birth always (handled by buildLifePath filter); skip later beats at/after death
       if (beat.id !== "birth" && age >= outcome.age) continue;
-      if (beat.required === false && age >= outcome.age) continue;
 
       ctx.beatAge = age;
       ctx.lastPoolEvent = null;
@@ -255,6 +378,7 @@
         text,
         beatId: beat.id,
       });
+      prevAge = age;
     }
 
     return stages;
@@ -703,9 +827,13 @@
         ? `Infant mortality used: <b>${pack.infantMortality.ratePer1000}</b> per 1000 live births (${pack.infantMortality.year})<br/>`
         : "";
       const regionLine =
-        outcome.lifePathVars?.labels?.region != null
-          ? `Birth region: <b>${outcome.lifePathVars.labels.region}</b><br/>`
-          : "";
+        outcome.lifePathVars?.labels?.place != null
+          ? `Home place: <b>${outcome.lifePathVars.labels.place}</b> (${
+              outcome.lifePathVars.labels.region || "—"
+            })<br/>`
+          : outcome.lifePathVars?.labels?.region != null
+            ? `Birth region: <b>${outcome.lifePathVars.labels.region}</b><br/>`
+            : "";
       return `${chanceLine}<br/>
         Model: <b>${outcome.country.name} country pack</b>${
           spec ? " + life-path spec" : ""
