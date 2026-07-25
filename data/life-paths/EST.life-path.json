@@ -634,15 +634,20 @@
       {
         "id": "move_within_estonia",
         "tag": "color",
-        "text": "your family moved from {place} to {place_to}, and you had to say goodbye to your old friends.",
+        "text": "your family moved from {place} to {place_to}, {move_aftermath}.",
         "weight": 0.9,
         "extra_slots": {
           "place_to": {
             "from": "place_bank",
             "different_region": true,
             "tag": "color"
+          },
+          "move_aftermath": {
+            "pool": "move_aftermath_events",
+            "tag": "color"
           }
-        }
+        },
+        "notes": "Aftermath wording is color variety; move A→B places stay concrete."
       }
     ],
     "school_events": [
@@ -1094,6 +1099,68 @@
         },
         "notes": "Color/rare — Estonia domestic adoption at birth is uncommon; not a published birth-register share. Keep scarce."
       }
+    ],
+    "move_aftermath_events": [
+      {
+        "id": "goodbye_friends",
+        "tag": "color",
+        "text": "and you had to say goodbye to your old friends",
+        "weight": 1.0
+      },
+      {
+        "id": "made_friends_quickly",
+        "tag": "color",
+        "text": "and you made new friends quickly",
+        "weight": 1.0
+      },
+      {
+        "id": "no_friends_to_miss",
+        "tag": "color",
+        "text": "and you did not have any friends to miss",
+        "weight": 0.9
+      },
+      {
+        "id": "only_family",
+        "tag": "color",
+        "text": "and your only friends were your parents and siblings anyway",
+        "weight": 1.0
+      },
+      {
+        "id": "felt_alone",
+        "tag": "color",
+        "text": "and you felt alone in the new place for a long time",
+        "weight": 1.0
+      },
+      {
+        "id": "excited_new_places",
+        "tag": "color",
+        "text": "and you were excited to see new places",
+        "weight": 1.0
+      },
+      {
+        "id": "quiet_for_weeks",
+        "tag": "color",
+        "text": "and the new courtyard stayed quiet for weeks before anyone asked your name",
+        "weight": 0.9
+      },
+      {
+        "id": "missed_old_room",
+        "tag": "color",
+        "text": "and you missed your old room more than anyone admitted",
+        "weight": 0.9
+      },
+      {
+        "id": "treated_like_adventure",
+        "tag": "color",
+        "text": "and the adults treated it like an adventure even when you did not",
+        "weight": 0.8
+      },
+      {
+        "id": "started_over_shy",
+        "tag": "color",
+        "text": "and you started over shy, watching the other kids from the edge",
+        "weight": 0.9
+      }
     ]
   },
   "example_rolls": [
@@ -1133,7 +1200,7 @@
         "settlement": "rural",
         "place": "Suure-Jaani"
       },
-      "output": "Born in Viljandi county, Estonia, into a middle-class family. You were born a girl. Your parents had been married for years before you arrived. Home was in Suure-Jaani. When you were 5, your family moved from Suure-Jaani to Annelinn in Tartu, and you had to say goodbye to your old friends. At 11, the trip from Annelinn in Tartu to school ate a chunk of every morning — rain, ice, or sun."
+      "output": "Born in Viljandi county, Estonia, into a middle-class family. You were born a girl. Your parents had been married for years before you arrived. Home was in Suure-Jaani. When you were 5, your family moved from Suure-Jaani to Annelinn in Tartu, and you were excited to see new places. At 11, the trip from Annelinn in Tartu to school ate a chunk of every morning — rain, ice, or sun."
     }
   ],
   "llm_brief": {
