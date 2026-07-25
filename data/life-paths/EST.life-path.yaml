@@ -1,6 +1,7 @@
 # Estonia life-path spec (stats-first draft)
 # Filled for review. Story flair intentionally plain — edit freely.
 # Primary year for weights: 2024 live births / mothers (unless noted).
+# Counts re-verified against Stat EE + TAI PX-Web APIs on 2026-07-25.
 
 schema_version: 1
 
@@ -15,6 +16,8 @@ meta:
     Socioeconomic start uses mother's educational level at birth (RV142U),
     which is the right prior for a newborn — not the adult population education mix.
     Tallinn is split out of Harju county using RV11U sub-row 784.
+    Mother nationality and country-of-birth are available as fact variables but are
+    NOT in the default birth template (avoid essentializing ethnicity in the opener).
     Later-life event pools are mostly color stubs for the flair pass;
     birth variables are fact-backed and should stay stable.
 
@@ -32,6 +35,7 @@ voice:
     - "Do not invent county birth shares"
     - "Do not imply that color events are nationally representative"
     - "Avoid stigmatizing whole regions or ethnic groups"
+    - "Do not put nationality/ethnicity into the birth opener by default"
 
 # ---------------------------------------------------------------------------
 # VARIABLES
@@ -90,14 +94,16 @@ variables:
         weight: 0.0056
     source:
       publisher: "Statistics Estonia"
-      table_or_url: "https://andmed.stat.ee/en/stat/RV11U"
       table_id: "RV11U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV11U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV11U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV11U"
       year: 2024
       confidence: "exact"
       notes: >
-        Live births by county, 2024. Tallinn weight from RV11U row "..Tallinn" (3262);
-        harju_excl_tallinn = Harju county (4793) − Tallinn (3262). Denominator = 9690
-        (all county rows excluding Whole country).
+        Live births by county, 2024. Tallinn from RV11U row "..Tallinn" (3262);
+        harju_excl_tallinn = Harju county (4793) − Tallinn (3262) = 1531.
+        Denominator = 9690 (Whole country). County-unknown = 0. Weights sum to 1.0.
 
   sex:
     description: "Sex of live-born child"
@@ -110,11 +116,13 @@ variables:
         weight: 0.4909
     source:
       publisher: "Statistics Estonia"
-      table_or_url: "https://andmed.stat.ee/en/stat/RV106"
       table_id: "RV106"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV106"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV106.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV106"
       year: 2024
       confidence: "exact"
-      notes: "Boys 4933, girls 4757, total 9690."
+      notes: "Boys 4933, girls 4757, total 9690 (all ethnic nationalities)."
 
   class_level:
     description: >
@@ -137,14 +145,16 @@ variables:
         weight: 0.5232
     source:
       publisher: "Statistics Estonia"
-      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
       table_id: "RV142U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV142U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV142U"
       year: 2024
       confidence: "exact"
       notes: >
-        Live births by mother's educational level, settlement total, all ages.
+        Live births by mother's educational level, settlement total, age groups total.
         Below upper secondary 1185; upper secondary / post-secondary non-tertiary 3432;
-        tertiary 5067. Unknown (6) excluded. Total known 9684.
+        tertiary 5067. Unknown (6) excluded. Known total 9684.
 
   parents_marital_status:
     description: "Mother's marital status among women who gave birth (TAI Medical Birth Register)"
@@ -166,14 +176,16 @@ variables:
         weight: 0.0002
     source:
       publisher: "National Institute for Health Development (TAI)"
-      table_or_url: "https://statistika.tai.ee/pxweb/en/Andmebaas/Andmebaas__01Rahvastik__02Synnid/SR55.px/"
       table_id: "SR55"
+      table_or_url: "https://statistika.tai.ee/pxweb/en/Andmebaas/Andmebaas__01Rahvastik__02Synnid/SR55.px/"
+      api_url: "https://statistika.tai.ee/api/v1/en/Andmebaas/01Rahvastik/02Synnid/SR55.px"
       year: 2024
       confidence: "exact"
       notes: >
-        Women given birth, Estonia residence, all nationalities:
-        registered marriage 4375; cohabitation 4708; single 228; divorced 41; widow 2
-        (n=9354 women). Aligns with Stat EE RV033 marital births ~46.6% in 2024
+        Women given birth, place of residence = Estonia, nationality = Total.
+        Registered marriage 4375; cohabitation 4708; single 228; divorced 41; widow 2.
+        Unknown (38) excluded. Known n = 9354 (all women = 9392 including unknown).
+        Cross-check: Stat EE RV033 marital births = 46.64% in 2024
         (https://andmed.stat.ee/en/stat/RV033).
 
   settlement:
@@ -187,11 +199,98 @@ variables:
         weight: 0.2900
     source:
       publisher: "Statistics Estonia"
-      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
       table_id: "RV142U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV142U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV142U"
       year: 2024
       confidence: "exact"
-      notes: "City/town 6880; rural 2810; total 9690."
+      notes: "City/town settlement region 6880; rural 2810; total 9690."
+
+  mother_age_group:
+    description: "Mother's age group at childbirth (optional; not in default birth template)"
+    values:
+      - id: under_20
+        label: "under 20"
+        weight: 0.0137
+      - id: age_20_24
+        label: "in her early twenties"
+        weight: 0.1009
+      - id: age_25_29
+        label: "in her mid-to-late twenties"
+        weight: 0.2420
+      - id: age_30_34
+        label: "in her early thirties"
+        weight: 0.3364
+      - id: age_35_39
+        label: "in her mid-to-late thirties"
+        weight: 0.2349
+      - id: age_40_plus
+        label: "forty or older"
+        weight: 0.0720
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV142U"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV142U"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV142U.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV142U"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Counts: <20 = 133; 20–24 = 978; 25–29 = 2345; 30–34 = 3260; 35–39 = 2276;
+        40+ = 698; total 9690. Mean age at childbirth (RV033) = 31.06;
+        mean age at first child = 28.93.
+
+  mother_born_in:
+    description: "Mother's country of birth (optional; not in default birth template)"
+    values:
+      - id: estonia
+        label: "born in Estonia"
+        weight: 0.8699
+      - id: foreign_eu
+        label: "born in another EU country"
+        weight: 0.0124
+      - id: foreign_non_eu
+        label: "born outside the EU"
+        weight: 0.1178
+    source:
+      publisher: "Statistics Estonia"
+      table_id: "RV115"
+      table_or_url: "https://andmed.stat.ee/en/stat/RV115"
+      browse_url: "https://andmed.stat.ee/pxweb/en/stat/stat__rahvastik__rahvastikusundmused__sunnid/RV115.px/"
+      api_url: "https://andmed.stat.ee/api/v1/en/stat/RV115"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Mother's country of birth, age groups total: Estonia 8429; foreign 1261
+        (EU except EE 120; non-EU 1141); unknown 0; total 9690.
+
+  mother_nationality:
+    description: >
+      Mother's nationality among women who gave birth (TAI). Optional for
+      conditional color later — do not put in the birth opener by default.
+    values:
+      - id: estonian
+        label: "Estonian"
+        weight: 0.7296
+      - id: russian
+        label: "Russian"
+        weight: 0.1666
+      - id: other
+        label: "another nationality"
+        weight: 0.1038
+    source:
+      publisher: "National Institute for Health Development (TAI)"
+      table_id: "SR55"
+      table_or_url: "https://statistika.tai.ee/pxweb/en/Andmebaas/Andmebaas__01Rahvastik__02Synnid/SR55.px/"
+      api_url: "https://statistika.tai.ee/api/v1/en/Andmebaas/01Rahvastik/02Synnid/SR55.px"
+      year: 2024
+      confidence: "exact"
+      notes: >
+        Place of residence = Estonia. Estonian 6851; Russian 1564;
+        other non-Estonian (Ukrainian 457 + Belarusian 24 + Finn 13 + Latvian 25
+        + other 456 = 975). Unknown (2) excluded. Known n = 9390.
+        Labels are neutral facts for weighting — never use to stereotype regions.
 
 # ---------------------------------------------------------------------------
 # BEATS
@@ -214,6 +313,8 @@ beats:
     notes: >
       Uses mother's status language ("Your mother was…") because SR55 is about
       women who gave birth, not a two-parent household survey.
+      mother_age_group / mother_born_in / mother_nationality are rolled for later
+      conditions but intentionally omitted from this template.
 
   - id: early_childhood
     title: "Early childhood"
@@ -329,15 +430,22 @@ pools:
       tag: color
       text: "the trip to school ate a chunk of every morning — rain, ice, or sun."
       weight: 1.0
+      by_settlement:
+        rural: 1.4
+        urban: 0.8
     - id: russian_estonian_mix
       tag: color
       text: "the stairwell mixed Estonian and Russian depending on who was shouting."
       weight: 0.7
-      by_class_level:
-        # Mild bias only — color, not a claim about national language stats
-        below_upper_secondary: 1.2
-        upper_secondary: 1.0
-        tertiary: 0.7
+      by_mother_nationality:
+        estonian: 0.6
+        russian: 1.8
+        other: 1.0
+      by_region:
+        # Mild color bias only — not a claim about language shares
+        ida_viru: 1.8
+        tallinn: 1.2
+      notes: "Color only. Do not treat as a language-statistics claim."
     - id: academics_expected
       tag: color
       text: "adults talked about marks and 'what comes after school' as if the path were already drawn."
@@ -454,6 +562,9 @@ example_rolls:
       class_level: tertiary
       parents_marital_status: cohabiting
       settlement: urban
+      mother_age_group: age_30_34
+      mother_born_in: estonia
+      mother_nationality: estonian
     output: >
       Born in Tallinn, Estonia, into an upper-middle-class family. You were born a girl.
       Your mother was living together unmarried. Home was in a city or town area.
@@ -467,6 +578,9 @@ example_rolls:
       class_level: below_upper_secondary
       parents_marital_status: married
       settlement: urban
+      mother_age_group: age_25_29
+      mother_born_in: estonia
+      mother_nationality: russian
     output: >
       Born in Ida-Viru county, Estonia, into a working-class family. You were born a boy.
       Your mother was married. Home was in a city or town area.
@@ -480,6 +594,9 @@ example_rolls:
       class_level: upper_secondary
       parents_marital_status: married
       settlement: rural
+      mother_age_group: age_30_34
+      mother_born_in: estonia
+      mother_nationality: estonian
     output: >
       Born in Viljandi county, Estonia, into a middle-class family. You were born a girl.
       Your mother was married. Home was in a rural area.
@@ -493,11 +610,30 @@ example_rolls:
       class_level: tertiary
       parents_marital_status: married
       settlement: urban
+      mother_age_group: age_35_39
+      mother_born_in: estonia
+      mother_nationality: estonian
     output: >
       Born in Tartu county, Estonia, into an upper-middle-class family. You were born a boy.
       Your mother was married. Home was in a city or town area.
       When you were 2, you were still growing up in Tartu county.
       At 15, adults talked about marks and 'what comes after school' as if the path were already drawn.
+
+  - title: "tallinn_foreign_born_mother"
+    rolls:
+      region: tallinn
+      sex: female
+      class_level: upper_secondary
+      parents_marital_status: cohabiting
+      settlement: urban
+      mother_age_group: age_25_29
+      mother_born_in: foreign_non_eu
+      mother_nationality: other
+    output: >
+      Born in Tallinn, Estonia, into a middle-class family. You were born a girl.
+      Your mother was living together unmarried. Home was in a city or town area.
+      When you were 3, a younger sibling arrived and the flat felt suddenly smaller.
+      At 10, you were in basic school near home, measuring the year in bus stops and term tests.
 
 # ---------------------------------------------------------------------------
 # LLM IMPLEMENTATION BRIEF
@@ -512,11 +648,13 @@ llm_brief:
     - "Keep 2024 weights unless updating with a newer cited year"
     - "Reuse vocab/pack stratum ids: below-upper-secondary, upper-secondary, tertiary"
     - "Honor fact vs color tags"
-    - "Cite RV11U, RV106, RV142U, SR55 (and RV033 as cross-check) in country pack sources"
+    - "Cite RV11U, RV106, RV142U, RV115, SR55 (and RV033 as cross-check) in country pack sources"
     - "Preserve mother-based marital wording unless a better two-parent source is added"
+    - "Roll mother_age_group / mother_born_in / mother_nationality but keep them out of birth template by default"
   must_not:
     - "Replace county weights with vibes"
     - "Hardcode only a few full stories per class"
+    - "Put nationality into the birth opener without an explicit design decision"
   deliverables:
     - "data/life-paths/EST.life-path.yaml (this file)"
     - "Generator wiring + sample outputs in the PR"
@@ -524,13 +662,40 @@ llm_brief:
     live_births_total: 9690
     tallinn_births: 3262
     harju_county_births: 4793
+    harju_excl_tallinn_births: 1531
     boys: 4933
     girls: 4757
     mother_edu_known_total: 9684
     mother_edu_below_upper_secondary: 1185
     mother_edu_upper_secondary: 3432
     mother_edu_tertiary: 5067
+    mothers_all_estonia_residence: 9392
+    mothers_known_marital: 9354
     mothers_married: 4375
     mothers_cohabiting: 4708
+    mothers_single: 228
+    mothers_divorced: 41
+    mothers_widowed: 2
+    mothers_marital_unknown: 38
+    marital_births_pct_rv033: 46.64
+    mean_mother_age_rv033: 31.06
     urban_births: 6880
     rural_births: 2810
+    mother_age_under_20: 133
+    mother_age_20_24: 978
+    mother_age_25_29: 2345
+    mother_age_30_34: 3260
+    mother_age_35_39: 2276
+    mother_age_40_plus: 698
+    mother_born_estonia: 8429
+    mother_born_foreign: 1261
+    mother_nationality_estonian: 6851
+    mother_nationality_russian: 1564
+    mother_nationality_other_non_estonian: 975
+  verified_via:
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV11U (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV106 (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV142U (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV115 (2024)"
+    - "POST https://andmed.stat.ee/api/v1/en/stat/RV033 (2024)"
+    - "POST https://statistika.tai.ee/api/v1/en/Andmebaas/01Rahvastik/02Synnid/SR55.px (2024, Elukoht=Estonia)"
