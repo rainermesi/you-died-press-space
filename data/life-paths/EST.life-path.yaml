@@ -132,15 +132,15 @@ variables:
     maps_to_pack_strata: "education"
     values:
       - id: below_upper_secondary
-        label: "working-class"
+        label: "a working-class"
         pack_stratum_id: "below-upper-secondary"
         weight: 0.1224
       - id: upper_secondary
-        label: "middle-class"
+        label: "a middle-class"
         pack_stratum_id: "upper-secondary"
         weight: 0.3544
       - id: tertiary
-        label: "upper-middle-class"
+        label: "an upper-middle-class"
         pack_stratum_id: "tertiary"
         weight: 0.5232
     source:
@@ -301,7 +301,7 @@ beats:
     age: 0
     required: true
     template: >
-      Born in {region}, Estonia, into a {class_level} family.
+      Born in {region}, Estonia, into {class_level} family.
       You were born a {sex}. Your mother was {parents_marital_status}.
       Home was in {settlement}.
     slots:

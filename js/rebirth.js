@@ -11,6 +11,7 @@
     world: null,
     fallback: null,
     packs: Object.create(null), // iso3 -> pack
+    lifePaths: Object.create(null), // iso3 -> life-path spec
   };
 
   function weightedChoice(items) {
@@ -100,6 +101,165 @@
       .trim();
   }
 
+  /* -------- life-path spec (YAML → JSON) -------- */
+
+  function lifePathFor(iso3) {
+    return state.lifePaths[iso3] || null;
+  }
+
+  function pickWeightedValues(values) {
+    return weightedChoice(
+      values.map((v) => ({
+        ...v,
+        weight: v.weight == null ? 1 : Number(v.weight),
+      }))
+    );
+  }
+
+  function rollLifePathVariables(spec) {
+    const rolled = Object.create(null);
+    const labels = Object.create(null);
+    for (const [name, def] of Object.entries(spec.variables || {})) {
+      const values = def.values || [];
+      if (!values.length) continue;
+      // Weights may be null → equal weight (or skip nulls later). Engine normalizes.
+      const pickable = values.map((v) => ({
+        ...v,
+        weight: v.weight == null || v.weight === "" ? 1 : Number(v.weight),
+      }));
+      const chosen = pickWeightedValues(pickable);
+      rolled[name] = chosen.id;
+      labels[name] = chosen.label;
+      if (name === "class_level" && chosen.pack_stratum_id) {
+        rolled.pack_stratum_id = chosen.pack_stratum_id;
+      }
+    }
+    return { ids: rolled, labels };
+  }
+
+  function sampleBeatAge(ageDef, beatId) {
+    if (ageDef == null) return 0;
+    if (typeof ageDef === "number") return ageDef;
+    const min = Number(ageDef.min);
+    const max = Number(ageDef.max);
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return 0;
+    const raw = min + Math.floor(Math.random() * (max - min + 1));
+    // Midlife template uses "{age}s" → decade bucket (40s, 50s)
+    if (beatId === "midlife") return Math.floor(raw / 10) * 10;
+    return raw;
+  }
+
+  function poolItemWeight(item, varIds) {
+    let w = item.weight == null ? 1 : Number(item.weight);
+    if (!(w > 0)) return 0;
+    const biasMaps = [
+      ["by_class_level", "class_level"],
+      ["by_settlement", "settlement"],
+      ["by_region", "region"],
+      ["by_mother_nationality", "mother_nationality"],
+      ["by_sex", "sex"],
+      ["by_mother_born_in", "mother_born_in"],
+      ["by_mother_age_group", "mother_age_group"],
+    ];
+    for (const [mapKey, varName] of biasMaps) {
+      const table = item[mapKey];
+      if (!table || typeof table !== "object") continue;
+      const key = varIds[varName];
+      if (key != null && table[key] != null) w *= Number(table[key]);
+    }
+    return w > 0 ? w : 0;
+  }
+
+  function pickPoolEvent(poolItems, varIds) {
+    if (!poolItems?.length) return null;
+    const weighted = poolItems
+      .map((item) => ({ item, weight: poolItemWeight(item, varIds) }))
+      .filter((row) => row.weight > 0);
+    if (!weighted.length) return null;
+    return weightedChoice(weighted).item;
+  }
+
+  function resolveSlotValue(slotDef, ctx) {
+    if (!slotDef || typeof slotDef !== "object") return "";
+    if (slotDef.literal != null) return String(slotDef.literal);
+    if (slotDef.literal_from) {
+      const path = String(slotDef.literal_from).split(".");
+      let cur = ctx.spec;
+      for (const part of path) cur = cur?.[part];
+      return cur == null ? "" : String(cur);
+    }
+    if (slotDef.from === "beat_age") return String(ctx.beatAge);
+    if (slotDef.variable) {
+      return ctx.labels[slotDef.variable] || ctx.ids[slotDef.variable] || "";
+    }
+    if (slotDef.pool) {
+      const items = ctx.spec.pools?.[slotDef.pool] || [];
+      const event = pickPoolEvent(items, ctx.ids);
+      if (!event) return "";
+      ctx.lastPoolEvent = event;
+      let text = event.text || "";
+      // Fill tokens from extra_slots, then shared variables
+      text = fillLifePathTemplate(text, event.extra_slots || {}, ctx, true);
+      return text;
+    }
+    return "";
+  }
+
+  function fillLifePathTemplate(template, slots, ctx, slotsAreExtras = false) {
+    if (!template) return "";
+    return String(template)
+      .replace(/\{([a-zA-Z0-9_]+)\}/g, (_, key) => {
+        if (slotsAreExtras) {
+          // When filling a pool fragment, prefer extra slot defs, then variables
+          if (slots?.[key]) return resolveSlotValue(slots[key], ctx);
+          if (ctx.labels[key] != null) return ctx.labels[key];
+          if (key === "age") return String(ctx.beatAge);
+          if (key === "country_name") return ctx.spec.meta?.country_name || "";
+          return `{${key}}`;
+        }
+        const slotDef = slots?.[key];
+        if (slotDef) return resolveSlotValue(slotDef, ctx);
+        if (ctx.labels[key] != null) return ctx.labels[key];
+        if (key === "age") return String(ctx.beatAge);
+        if (key === "country_name") return ctx.spec.meta?.country_name || "";
+        return `{${key}}`;
+      })
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function composeLifePathFromSpec(outcome, spec) {
+    const vars = outcome.lifePathVars || rollLifePathVariables(spec);
+    const ctx = {
+      spec,
+      ids: vars.ids,
+      labels: vars.labels,
+      beatAge: 0,
+      lastPoolEvent: null,
+    };
+
+    const stages = [];
+    for (const beat of spec.beats || []) {
+      const age = sampleBeatAge(beat.age, beat.id);
+      // Truncate: keep birth always (handled by buildLifePath filter); skip later beats at/after death
+      if (beat.id !== "birth" && age >= outcome.age) continue;
+      if (beat.required === false && age >= outcome.age) continue;
+
+      ctx.beatAge = age;
+      ctx.lastPoolEvent = null;
+      const text = fillLifePathTemplate(beat.template, beat.slots || {}, ctx);
+      if (!text) continue;
+      stages.push({
+        age,
+        label: beat.title || beat.id,
+        text,
+        beatId: beat.id,
+      });
+    }
+
+    return stages;
+  }
+
   function shortLabel(strataType, stratumId) {
     return (
       state.vocab?.strataTypes?.[strataType]?.levels?.[stratumId]?.shortLabel ||
@@ -150,12 +310,22 @@
       }
     }
 
+    // Load life-path specs referenced by country packs
+    const lifePaths = Object.create(null);
+    await Promise.all(
+      Object.entries(packs).map(async ([iso3, pack]) => {
+        if (!pack.lifePathSpec) return;
+        lifePaths[iso3] = await fetchJson(pack.lifePathSpec);
+      })
+    );
+
     state.catalog = catalog;
     state.vocab = vocab;
     state.engine = engine;
     state.world = world;
     state.fallback = fallback;
     state.packs = packs;
+    state.lifePaths = lifePaths;
     state.ready = true;
     return state;
   }
@@ -210,7 +380,20 @@
   function rollPack(country) {
     const pack = state.packs[country.iso3];
     const stratumType = pack.strata.type;
-    const stratum = pickStratumFromShares(pack.strata.shares);
+    const spec = lifePathFor(country.iso3);
+    let stratum;
+    let lifePathVars = null;
+
+    if (spec?.variables?.class_level?.values?.length) {
+      // Mother's education (life-path) drives both story class and mortality stratum
+      lifePathVars = rollLifePathVariables(spec);
+      stratum =
+        lifePathVars.ids.pack_stratum_id ||
+        pickStratumFromShares(pack.strata.shares);
+    } else {
+      stratum = pickStratumFromShares(pack.strata.shares);
+    }
+
     const secondary = pickSecondary(pack, stratum);
     const age = samplePackAge(pack, stratum);
     const causeId = pickPackCause(pack, age);
@@ -225,6 +408,7 @@
       causeId,
       causeLabel: causeLabel(causeId),
       familyPhrase: familyPhrase(stratumType, stratum),
+      lifePathVars,
     };
   }
 
@@ -424,6 +608,11 @@
 
   function packLifePathStages(outcome) {
     const pack = outcome.pack;
+    const spec = lifePathFor(pack.iso3);
+    if (spec?.beats?.length) {
+      return composeLifePathFromSpec(outcome, spec);
+    }
+
     const bank = pack.storyBank;
     const legacy = pack.lifePath?.[outcome.stratum];
     if (!bank && !legacy) return fallbackLifePathStages(outcome);
@@ -455,6 +644,8 @@
   }
 
   function buildLifePath(outcome) {
+    if (outcome._builtPath) return outcome._builtPath;
+
     const stages =
       outcome.mode === "pack"
         ? packLifePathStages(outcome)
@@ -469,13 +660,16 @@
     } else if (outcome.age < 5) {
       intro =
         "This life was short. Here is what little path there was.";
+    } else if (outcome.mode === "pack" && lifePathFor(outcome.country.iso3)) {
+      intro = `One possible path through a life in ${outcome.country.name}. Each reroll tells a different version.`;
     } else if (outcome.mode === "pack") {
       intro = `One possible path through a life in ${outcome.country.name}. Each reroll tells a different version.`;
     } else {
       intro = `One possible path in ${outcome.country.name}. (No detailed country pack yet — this path is sketched, not curated.)`;
     }
 
-    return { intro, stages: [...lived, death] };
+    outcome._builtPath = { intro, stages: [...lived, death] };
+    return outcome._builtPath;
   }
 
   function pathHeading(stage) {
@@ -496,6 +690,10 @@
       const pack = outcome.pack;
       const le = pack.lifeExpectancy.byStratum[outcome.stratum];
       const share = pack.strata.shares[outcome.stratum];
+      const spec = lifePathFor(outcome.country.iso3);
+      const classFromBirth = spec?.variables?.class_level
+        ? `Story class uses <b>mother's education at birth</b> (life-path weights), mapped to pack stratum <code>${outcome.stratum}</code>.<br/>`
+        : "";
       const secondaryLine = outcome.secondary
         ? `${shortLabel(outcome.secondary.type, outcome.secondary.id)} given stratum: <b>${
             outcome.secondary.id
@@ -504,10 +702,18 @@
       const infant = pack.infantMortality
         ? `Infant mortality used: <b>${pack.infantMortality.ratePer1000}</b> per 1000 live births (${pack.infantMortality.year})<br/>`
         : "";
+      const regionLine =
+        outcome.lifePathVars?.labels?.region != null
+          ? `Birth region: <b>${outcome.lifePathVars.labels.region}</b><br/>`
+          : "";
       return `${chanceLine}<br/>
-        Model: <b>${outcome.country.name} country pack</b><br/>
+        Model: <b>${outcome.country.name} country pack</b>${
+          spec ? " + life-path spec" : ""
+        }<br/>
+        ${regionLine}
         ${outcome.stratumType}: <b>${shortLabel(outcome.stratumType, outcome.stratum)}</b>
-        (share ≈ ${share})<br/>
+        (adult pack share ≈ ${share})<br/>
+        ${classFromBirth}
         ${secondaryLine}
         Life expectancy at birth for this stratum: <b>${le}</b> (${pack.lifeExpectancy.year})<br/>
         ${infant}
@@ -539,6 +745,9 @@
   }
 
   function outcomeHeadline(outcome) {
+    const path = buildLifePath(outcome);
+    const birth = path.stages?.find((s) => s.beatId === "birth" || s.label === "Birth");
+    if (birth?.text && !birth.death) return birth.text;
     return `Born in ${outcome.country.name}. ${storyBeat(
       outcome.stratumType,
       outcome.stratum

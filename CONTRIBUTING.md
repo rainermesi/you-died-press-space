@@ -13,10 +13,14 @@ Thanks for helping improve Rebirth Odds.
 
 ## Life-path stories (recommended for narrative work)
 
-For randomized, stats-grounded life stories, fill out
-[`data/life-paths/TEMPLATE.life-path.yaml`](data/life-paths/TEMPLATE.life-path.yaml)
-and follow [`data/life-paths/README.md`](data/life-paths/README.md).
-You can hand the completed YAML to an LLM using the built-in `llm_brief`.
+For randomized, stats-grounded life stories:
+
+1. Fill [`data/life-paths/TEMPLATE.life-path.yaml`](data/life-paths/TEMPLATE.life-path.yaml) → `{ISO3}.life-path.yaml` ([README](data/life-paths/README.md)).
+2. Compile: `python3 scripts/compile-life-path.py {ISO3}`.
+3. Point the country pack at the JSON: `"lifePathSpec": "life-paths/{ISO3}.life-path.json"`.
+4. Open a PR (YAML + JSON + pack pointer).
+
+You can also hand a completed YAML to an LLM using the built-in `llm_brief`.
 
 ## Architecture (short)
 
