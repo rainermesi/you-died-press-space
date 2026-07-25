@@ -2,7 +2,7 @@
 # Runtime uses the compiled JSON — after edits run:
 #   python3 scripts/compile-life-path.py EST
 #
-# move_aftermath_events: color variety after A→B moves
+# school_year_texture_events / move_aftermath_events: color variety pools
 
 schema_version: 1
 meta:
@@ -522,15 +522,24 @@ pools:
   school_events:
   - id: local_basic_school
     tag: color
-    text: you were in basic school near {place}, measuring the year in bus stops and term tests.
+    text: you were in basic school near {place}, {school_year_texture}.
     weight: 1.2
+    extra_slots:
+      school_year_texture:
+        pool: school_year_texture_events
+        tag: color
+    notes: Year-texture clause is color variety.
   - id: long_school_trip
     tag: color
-    text: the trip from {place} to school ate a chunk of every morning — rain, ice, or sun.
+    text: the trip from {place} to school ate a chunk of every morning — {school_trip_texture}.
     weight: 1.0
     by_settlement:
       rural: 1.4
       urban: 0.8
+    extra_slots:
+      school_trip_texture:
+        pool: school_trip_texture_events
+        tag: color
   - id: russian_estonian_mix
     tag: color
     text: around {place}, the stairwell mixed Estonian and Russian depending on who was shouting.
@@ -900,6 +909,72 @@ pools:
   - id: started_over_shy
     tag: color
     text: and you started over shy, watching the other kids from the edge
+    weight: 0.9
+  school_year_texture_events:
+  - id: bus_stops_term_tests
+    tag: color
+    text: measuring the year in bus stops and term tests
+    weight: 1.0
+  - id: schoolyard_cracks
+    tag: color
+    text: learning every crack in the schoolyard asphalt
+    weight: 1.0
+  - id: countdown_weekends
+    tag: color
+    text: counting down to weekends more carefully than to holidays
+    weight: 1.0
+  - id: same_coat_hook
+    tag: color
+    text: with the same coat hook and the same drafty window all year
+    weight: 1.0
+  - id: lunch_bell
+    tag: color
+    text: where lunch smelled the same every day and the bell still surprised you
+    weight: 0.9
+  - id: friendship_score
+    tag: color
+    text: keeping score in friendships as carefully as in marks
+    weight: 1.0
+  - id: walk_home
+    tag: color
+    text: and the walk home was half the education
+    weight: 0.9
+  - id: blackboard_dust
+    tag: color
+    text: with chalkboard dust on your sleeves by noon
+    weight: 0.9
+  - id: quiet_back_row
+    tag: color
+    text: mostly from the quiet back row unless someone called your name
+    weight: 0.9
+  - id: gym_shoes_bag
+    tag: color
+    text: hauling gym shoes in a plastic bag that never quite closed
+    weight: 0.8
+  school_trip_texture_events:
+  - id: rain_ice_sun
+    tag: color
+    text: rain, ice, or sun
+    weight: 1.0
+  - id: dark_both_ways
+    tag: color
+    text: dark both ways in winter
+    weight: 1.0
+  - id: fog_on_windows
+    tag: color
+    text: fog on the bus windows and wet wool in the aisle
+    weight: 1.0
+  - id: same_potholes
+    tag: color
+    text: the same potholes every morning
+    weight: 0.9
+  - id: late_if_missed
+    tag: color
+    text: and one missed connection meant a late mark
+    weight: 0.9
+  - id: headphones_silence
+    tag: color
+    text: headphones in, talking to nobody
     weight: 0.9
 example_rolls:
 - title: tallinn_tertiary_cohab
