@@ -9,6 +9,10 @@ Use these YAML specs to design **stats-grounded, highly random** life stories pe
 3. Write 3–5 `example_rolls` you like — those are the acceptance tests.
 4. Give the filled file to an LLM (keep the `llm_brief` section) or open a PR.
 
+## Examples
+
+- [`EST.life-path.yaml`](EST.life-path.yaml) — Estonia stats-first draft (2024 births / mothers). Flair welcome.
+
 ## What belongs here vs the country pack
 
 | In the life-path YAML | In `countries/XXX.json` |
