@@ -123,6 +123,7 @@
       ["by_settlement", "settlement"],
       ["by_region", "region"],
       ["by_mother_nationality", "mother_nationality"],
+      ["by_parents_marital_status", "parents_marital_status"],
       ["by_sex", "sex"],
     ];
     for (const [mapKey, varName] of biasMaps) {

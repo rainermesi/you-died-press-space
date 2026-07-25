@@ -6,7 +6,7 @@
     "language": "en",
     "updated": "2026-07-25",
     "author": "cursor-agent (stats draft for human flair pass)",
-    "notes": "Birth-weighted distributions from Statistics Estonia and TAI. Home place is sampled from curated town/district banks keyed by county + urban/rural. Childhood GP-visit beats cite probable causes (otitis, caries, ARI). School-mark patterns use Estonia's 5-point scale with PISA-informed SES bias. Later-life pools remain mostly color stubs for the flair pass."
+    "notes": "Birth-weighted distributions from Statistics Estonia and TAI. Home place is sampled from curated town/district banks keyed by county + urban/rural. Childhood GP-visit beats cite probable causes (otitis, caries, ARI). School-mark patterns use Estonia's 5-point scale with PISA-informed SES bias. Later-life pools remain mostly color stubs for the flair pass. Birth parent-situation lines vary within SR55 marital buckets; maternal death ~5/100k (modeled MMR 2023); adoption kept scarce as color."
   },
   "voice": {
     "person": "second",
@@ -419,7 +419,7 @@
       "title": "Birth",
       "age": 0,
       "required": true,
-      "template": "Born in {region}, Estonia, into {class_level} family. You were born a {sex}. Your mother was {parents_marital_status}. Home was in {place}.",
+      "template": "Born in {region}, Estonia, into {class_level} family. You were born a {sex}. {parent_situation} Home was in {place}.",
       "slots": {
         "region": {
           "variable": "region",
@@ -433,16 +433,16 @@
           "variable": "sex",
           "tag": "fact"
         },
-        "parents_marital_status": {
-          "variable": "parents_marital_status",
-          "tag": "fact"
+        "parent_situation": {
+          "pool": "parent_situation_events",
+          "tag": "mixed"
         },
         "place": {
           "from": "place_bank",
           "tag": "fact"
         }
       },
-      "notes": "Place is sampled from place_banks[region][settlement]. Settlement stays as an internal fact variable for later biases."
+      "notes": "parent_situation is sampled from parent_situation_events, gated by rolled parents_marital_status (TAI SR55). Rare maternal-death / adoption lines are tiny weights."
     },
     {
       "id": "early_childhood",
@@ -828,6 +828,272 @@
         "text": "the children were old enough to ignore you and still young enough to need you.",
         "weight": 1.0
       }
+    ],
+    "parent_situation_events": [
+      {
+        "id": "married_plain",
+        "tag": "fact",
+        "text": "Your mother was married.",
+        "weight": 1.0,
+        "by_parents_marital_status": {
+          "married": 1.0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "married_recently",
+        "tag": "color",
+        "text": "Your mother and father had only recently married.",
+        "weight": 1.1,
+        "by_parents_marital_status": {
+          "married": 1.0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        },
+        "notes": "Color timing within marriage; not a national newlywed-at-birth rate."
+      },
+      {
+        "id": "married_long",
+        "tag": "color",
+        "text": "Your parents had been married for years before you arrived.",
+        "weight": 1.2,
+        "by_parents_marital_status": {
+          "married": 1.0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "married_fifteen",
+        "tag": "color",
+        "text": "Your parents had been married for about fifteen years when you were born.",
+        "weight": 0.5,
+        "by_parents_marital_status": {
+          "married": 1.0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        },
+        "notes": "Color duration; mean mother age ~31 leaves room for long prior marriages but exact share unknown."
+      },
+      {
+        "id": "married_quiet_household",
+        "tag": "color",
+        "text": "Your mother was married, and home already had the quiet routines of a long household.",
+        "weight": 0.8,
+        "by_parents_marital_status": {
+          "married": 1.0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "cohab_plain",
+        "tag": "fact",
+        "text": "Your mother was living together unmarried with your father.",
+        "weight": 1.2,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 1.0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "cohab_not_paper",
+        "tag": "color",
+        "text": "Your parents shared a home but had not put marriage on paper.",
+        "weight": 1.1,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 1.0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "cohab_maybe_later",
+        "tag": "color",
+        "text": "Your mother and father lived together and talked about marrying later.",
+        "weight": 0.9,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 1.0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "cohab_ordinary",
+        "tag": "color",
+        "text": "Your parents were a couple without a wedding date — ordinary enough in Estonia.",
+        "weight": 1.0,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 1.0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 0
+        },
+        "source": {
+          "publisher": "TAI SR55 / Stat EE",
+          "table_or_url": "https://statistika.tai.ee/pxweb/en/Andmebaas/Andmebaas__01Rahvastik__02Synnid/SR55.px/",
+          "year": 2024,
+          "confidence": "exact",
+          "notes": "Cohabitation is the plurality marital status among women giving birth in Estonia (SR55 2024)."
+        }
+      },
+      {
+        "id": "single_plain",
+        "tag": "fact",
+        "text": "Your mother was a single mother.",
+        "weight": 1.2,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 1.0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "single_father_left",
+        "tag": "color",
+        "text": "Your mother was on her own — your father had left before you learned his face.",
+        "weight": 1.0,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 1.0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "single_father_unknown",
+        "tag": "color",
+        "text": "Your mother raised the start of your life without a partner named on the forms.",
+        "weight": 0.9,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 1.0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "single_disappeared",
+        "tag": "color",
+        "text": "Your mother was single; the man who might have been your father had already disappeared from the story.",
+        "weight": 0.7,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 1.0,
+          "divorced": 0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "divorced_plain",
+        "tag": "fact",
+        "text": "Your mother was divorced when you were born.",
+        "weight": 1.2,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 1.0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "divorced_father_elsewhere",
+        "tag": "color",
+        "text": "Your mother was divorced, and your father lived elsewhere from the start.",
+        "weight": 1.0,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 1.0,
+          "widowed": 0
+        }
+      },
+      {
+        "id": "widowed_plain",
+        "tag": "fact",
+        "text": "Your mother was widowed when you were born.",
+        "weight": 1.2,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 1.0
+        }
+      },
+      {
+        "id": "widowed_father_died",
+        "tag": "color",
+        "text": "Your father had died before you arrived; your mother began alone.",
+        "weight": 1.0,
+        "by_parents_marital_status": {
+          "married": 0,
+          "cohabiting": 0,
+          "single": 0,
+          "divorced": 0,
+          "widowed": 1.0
+        }
+      },
+      {
+        "id": "mother_died_childbirth",
+        "tag": "fact",
+        "text": "Your mother died in childbirth; your father was left to raise you.",
+        "weight": 8e-05,
+        "by_parents_marital_status": {
+          "married": 1.0,
+          "cohabiting": 1.0,
+          "single": 0.5,
+          "divorced": 0.5,
+          "widowed": 0.2
+        },
+        "source": {
+          "publisher": "World Bank / UNICEF modeled MMR",
+          "table_or_url": "https://www.theglobaleconomy.com/Estonia/maternal_mortality/",
+          "year": 2023,
+          "confidence": "approximate",
+          "notes": "Estonia maternal mortality ~5 deaths per 100,000 live births (2023 modeled). Extremely rare by design."
+        }
+      },
+      {
+        "id": "adopted",
+        "tag": "color",
+        "text": "You were adopted early; the adults who raised you were not the ones who gave birth to you.",
+        "weight": 0.004,
+        "by_parents_marital_status": {
+          "married": 1.0,
+          "cohabiting": 0.8,
+          "single": 0.6,
+          "divorced": 0.6,
+          "widowed": 0.5
+        },
+        "notes": "Color/rare — Estonia domestic adoption at birth is uncommon; not a published birth-register share. Keep scarce."
+      }
     ]
   },
   "example_rolls": [
@@ -842,7 +1108,7 @@
         "place": "Kadriorg in Tallinn",
         "school_marks": "fours_and_fives"
       },
-      "output": "Born in Tallinn, Estonia, into an upper-middle-class family. You were born a girl. Your mother was living together unmarried. Home was in Kadriorg in Tallinn. When you were 3, a middle-ear infection kept sending you back to the family doctor between kindergarten mornings. At 12, your report card showed mostly fours and fives, and adults talked about what comes after school as if the path were already drawn."
+      "output": "Born in Tallinn, Estonia, into an upper-middle-class family. You were born a girl. Your parents shared a home but had not put marriage on paper. Home was in Kadriorg in Tallinn. When you were 3, a middle-ear infection kept sending you back to the family doctor between kindergarten mornings. At 12, your report card showed mostly fours and fives, and adults talked about what comes after school as if the path were already drawn."
     },
     {
       "title": "ida_viru_working_married_boy",
@@ -855,7 +1121,7 @@
         "place": "Narva",
         "school_marks": "threes_and_twos"
       },
-      "output": "Born in Ida-Viru county, Estonia, into a working-class family. You were born a boy. Your mother was married. Home was in Narva. When you were 4, grandparents covered long stretches of childcare in Narva while the adults worked. At 14, with threes with some twos on the report card, teachers mentioned vocational options more often than university brochures."
+      "output": "Born in Ida-Viru county, Estonia, into a working-class family. You were born a boy. Your parents had been married for years before you arrived. Home was in Narva. When you were 4, grandparents covered long stretches of childcare in Narva while the adults worked. At 14, with threes with some twos on the report card, teachers mentioned vocational options more often than university brochures."
     },
     {
       "title": "viljandi_middle_rural_move",
@@ -867,7 +1133,7 @@
         "settlement": "rural",
         "place": "Suure-Jaani"
       },
-      "output": "Born in Viljandi county, Estonia, into a middle-class family. You were born a girl. Your mother was married. Home was in Suure-Jaani. When you were 5, your family moved from Suure-Jaani to Annelinn in Tartu, and you had to say goodbye to your old friends. At 11, the trip from Annelinn in Tartu to school ate a chunk of every morning — rain, ice, or sun."
+      "output": "Born in Viljandi county, Estonia, into a middle-class family. You were born a girl. Your parents had been married for years before you arrived. Home was in Suure-Jaani. When you were 5, your family moved from Suure-Jaani to Annelinn in Tartu, and you had to say goodbye to your old friends. At 11, the trip from Annelinn in Tartu to school ate a chunk of every morning — rain, ice, or sun."
     }
   ],
   "llm_brief": {
